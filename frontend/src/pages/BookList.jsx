@@ -2,6 +2,9 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CartContext } from '../context/CartContext'
 import bookService from '../services/bookService'
+import categoryService from '../services/categoryService'
+import authorService from '../services/authorService'
+import { showSuccess, showError } from '../utils/toastNotifications'
 import '../styles/BookList.css'
 
 function BookList() {
@@ -55,9 +58,8 @@ function BookList() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/categories')
-      const data = await response.json()
-      setCategories(data || [])
+      const response = await categoryService.getAllCategories()
+      setCategories(response.data || [])
     } catch (err) {
       console.error('Lỗi khi tải danh mục:', err)
       setCategories([])
@@ -66,9 +68,8 @@ function BookList() {
 
   const fetchAuthors = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/authors')
-      const data = await response.json()
-      setAuthors(data || [])
+      const response = await authorService.getAllAuthors()
+      setAuthors(response.data || [])
     } catch (err) {
       console.error('Lỗi khi tải tác giả:', err)
       setAuthors([])
@@ -141,8 +142,12 @@ function BookList() {
   }
 
   const handleAddToCart = (book) => {
+    if (book.stockQuantity <= 0) {
+      showError('❌ Sách này đã hết hàng')
+      return
+    }
     addToCart(book)
-    alert('Đã thêm vào giỏ hàng!')
+    showSuccess('✅ Thêm vào giỏ hàng thành công!')
   }
 
   const handleViewDetail = (bookId) => {
@@ -193,7 +198,7 @@ function BookList() {
                   <h3 className="book-title">{book.title}</h3>
                   <p className="book-author">Tác giả: {book.author?.name || 'Không xác định'}</p>
                   <p className="book-publisher">NXB: {book.publisher?.name || 'Không xác định'}</p>
-                  <p className="book-price">{book.price?.toLocaleString()} VND</p>
+                  <p className="book-price">{book.price?.toLocaleString('vi-VN')} ₫</p>
                   <button 
                     className="btn-add-cart"
                     onClick={() => handleAddToCart(book)}

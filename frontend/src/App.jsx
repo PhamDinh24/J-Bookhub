@@ -1,6 +1,7 @@
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import {AuthProvider} from './context/AuthContext'
 import {CartProvider} from './context/CartContext'
+import {ToastProvider} from './components/Toast'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -25,6 +26,7 @@ function App() {
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AuthProvider>
                 <CartProvider>
+                    <ToastProvider />
                     <div className="app">
                         <Header/>
                         <Routes>

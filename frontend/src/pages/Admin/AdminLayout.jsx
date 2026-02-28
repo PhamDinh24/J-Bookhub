@@ -34,7 +34,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              📊 Bảng Điều Khiển
+              Bảng Điều Khiển
             </button>
           </li>
           <li>
@@ -42,7 +42,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'books' ? 'active' : ''}`}
               onClick={() => setActiveTab('books')}
             >
-              📚 Quản Lý Sách
+              Quản Lý Sách
             </button>
           </li>
           <li>
@@ -50,7 +50,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'categories' ? 'active' : ''}`}
               onClick={() => setActiveTab('categories')}
             >
-              🏷️ Quản Lý Danh Mục
+              Quản Lý Danh Mục
             </button>
           </li>
           <li>
@@ -58,7 +58,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'authors' ? 'active' : ''}`}
               onClick={() => setActiveTab('authors')}
             >
-              ✍️ Quản Lý Tác Giả
+              Quản Lý Tác Giả
             </button>
           </li>
           <li>
@@ -66,7 +66,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'publishers' ? 'active' : ''}`}
               onClick={() => setActiveTab('publishers')}
             >
-              🏢 Quản Lý NXB
+              Quản Lý NXB
             </button>
           </li>
           <li>
@@ -74,7 +74,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'users' ? 'active' : ''}`}
               onClick={() => setActiveTab('users')}
             >
-              👥 Quản Lý Người Dùng
+              Quản Lý Người Dùng
             </button>
           </li>
           <li>
@@ -82,7 +82,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => setActiveTab('orders')}
             >
-              📦 Quản Lý Đơn Hàng
+              Quản Lý Đơn Hàng
             </button>
           </li>
           <li>
@@ -90,7 +90,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'payments' ? 'active' : ''}`}
               onClick={() => setActiveTab('payments')}
             >
-              💳 Quản Lý Thanh Toán
+              Quản Lý Thanh Toán
             </button>
           </li>
           <li>
@@ -98,7 +98,7 @@ function AdminLayout() {
               className={`menu-link ${activeTab === 'reviews' ? 'active' : ''}`}
               onClick={() => setActiveTab('reviews')}
             >
-              ⭐ Quản Lý Đánh Giá
+              Quản Lý Đánh Giá
             </button>
           </li>
         </ul>

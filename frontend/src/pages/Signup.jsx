@@ -2,6 +2,7 @@ import { useState, useContext } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import api from '../services/api'
+import { showSuccess, showError } from '../utils/toastNotifications'
 import '../styles/Login.css'
 
 function Signup() {
@@ -30,27 +31,37 @@ function Signup() {
 
     // Validation
     if (!formData.fullName.trim()) {
-      setError('Vui lòng nhập họ và tên')
+      const msg = 'Vui lòng nhập họ và tên'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
     if (!formData.email.trim()) {
-      setError('Vui lòng nhập email')
+      const msg = 'Vui lòng nhập email'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
     if (!formData.password.trim()) {
-      setError('Vui lòng nhập mật khẩu')
+      const msg = 'Vui lòng nhập mật khẩu'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
     if (formData.password.length < 6) {
-      setError('Mật khẩu phải có ít nhất 6 ký tự')
+      const msg = 'Mật khẩu phải có ít nhất 6 ký tự'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu không khớp')
+      const msg = 'Mật khẩu không khớp'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
@@ -73,14 +84,18 @@ function Signup() {
           role: data.role
         }, data.token)
 
+        showSuccess('✅ Đăng ký thành công! Vui lòng đăng nhập.')
         navigate('/')
       } else {
-        setError(data.error || 'Đăng ký thất bại')
+        const errorMsg = data.error || 'Đăng ký thất bại'
+        setError(errorMsg)
+        showError('❌ ' + errorMsg)
       }
     } catch (err) {
       console.error('Signup error:', err)
       const errorMsg = err.response?.data?.error || err.message || 'Lỗi đăng ký'
       setError(errorMsg)
+      showError('❌ ' + errorMsg)
     } finally {
       setLoading(false)
     }

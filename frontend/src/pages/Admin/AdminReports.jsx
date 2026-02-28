@@ -132,7 +132,7 @@ function AdminReports() {
     document.body.removeChild(element)
   }
 
-  if (loading) return <div className="loading">⏳ Đang tải báo cáo...</div>
+  if (loading) return <div className="loading">Đang tải báo cáo...</div>
 
   const chartOptions = {
     responsive: true,

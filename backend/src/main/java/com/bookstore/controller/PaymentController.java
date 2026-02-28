@@ -25,13 +25,14 @@ public class PaymentController {
     private VNPayService vnPayService;
 
     @PostMapping("/create-vnpay-url")
-    public ResponseEntity<Map<String, Object>> createVNPayUrl(
-            @RequestParam Long orderId,
-            @RequestParam Long amount,
-            @RequestParam String orderInfo,
-            @RequestParam String returnUrl) throws UnsupportedEncodingException {
+    public ResponseEntity<Map<String, Object>> createVNPayUrl(@RequestBody Map<String, Object> request) throws UnsupportedEncodingException {
         
         try {
+            Long orderId = Long.parseLong(request.get("orderId").toString());
+            Long amount = Long.parseLong(request.get("amount").toString());
+            String orderInfo = request.get("orderInfo").toString();
+            String returnUrl = request.get("returnUrl").toString();
+            
             logger.info("Creating VNPay URL - OrderId: " + orderId + ", Amount: " + amount);
             String paymentUrl = vnPayService.createPaymentUrl(orderId, amount, orderInfo, returnUrl);
             
@@ -134,5 +135,31 @@ public class PaymentController {
         return paymentService.getPaymentByOrderId(orderId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterPayments(
+            @RequestParam(required = false) String method,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        try {
+            return ResponseEntity.ok(paymentService.filterPayments(method, status, startDate, endDate));
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPayments(@RequestParam String transactionId) {
+        try {
+            return ResponseEntity.ok(paymentService.searchByTransactionId(transactionId));
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 }

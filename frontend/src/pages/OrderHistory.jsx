@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import orderService from '../services/orderService'
+import { showError } from '../utils/toastNotifications'
 import '../styles/OrderHistory.css'
 
 function OrderHistory() {
@@ -25,6 +26,7 @@ function OrderHistory() {
       setOrders(response.data || [])
     } catch (err) {
       console.error('Lỗi khi tải lịch sử đơn hàng:', err)
+      showError('❌ Lỗi khi tải lịch sử đơn hàng')
     } finally {
       setLoading(false)
     }

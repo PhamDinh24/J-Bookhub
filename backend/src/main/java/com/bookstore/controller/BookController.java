@@ -1,5 +1,6 @@
 package com.bookstore.controller;
 
+import com.bookstore.dto.BookDTO;
 import com.bookstore.model.Book;
 import com.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,13 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(book));
+    public ResponseEntity<Book> createBook(@RequestBody BookDTO bookDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBookFromDTO(bookDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Integer id, @RequestBody Book bookDetails) {
-        return ResponseEntity.ok(bookService.updateBook(id, bookDetails));
+    public ResponseEntity<Book> updateBook(@PathVariable Integer id, @RequestBody BookDTO bookDTO) {
+        return ResponseEntity.ok(bookService.updateBookFromDTO(id, bookDTO));
     }
 
     @DeleteMapping("/{id}")

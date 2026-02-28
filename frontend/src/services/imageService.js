@@ -4,11 +4,15 @@ const imageService = {
   /**
    * Upload book cover image
    * @param {File} file - Image file to upload
+   * @param {number} bookId - Book ID for unique image identification
    * @returns {Promise} - Response with image URL
    */
-  uploadBookCover: async (file) => {
+  uploadBookCover: async (file, bookId = null) => {
     const formData = new FormData()
     formData.append('file', file)
+    if (bookId) {
+      formData.append('bookId', bookId)
+    }
     
     try {
       const response = await api.post('/images/upload/book-cover', formData, {

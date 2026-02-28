@@ -2,6 +2,7 @@ import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import api from '../services/api'
+import { showSuccess, showError } from '../utils/toastNotifications'
 import '../styles/Login.css'
 
 function Login() {
@@ -39,14 +40,18 @@ function Login() {
           role: data.role
         }, data.token)
 
+        showSuccess('✅ Đăng nhập thành công!')
         navigate('/')
       } else {
-        setError(data.error || 'Đăng nhập thất bại')
+        const errorMsg = data.error || 'Đăng nhập thất bại'
+        setError(errorMsg)
+        showError('❌ ' + errorMsg)
       }
     } catch (err) {
       console.error('Login error:', err)
       const errorMsg = err.response?.data?.error || err.message || 'Lỗi đăng nhập'
       setError(errorMsg)
+      showError('❌ ' + errorMsg)
     } finally {
       setLoading(false)
     }

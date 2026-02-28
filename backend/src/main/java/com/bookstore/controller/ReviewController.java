@@ -52,4 +52,51 @@ public class ReviewController {
             return ResponseEntity.status(500).build();
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateReview(@PathVariable Integer id, @RequestBody Review reviewDetails) {
+        try {
+            return reviewRepository.findById(id)
+                    .map(review -> {
+                        if (reviewDetails.getRating() != null) {
+                            review.setRating(reviewDetails.getRating());
+                        }
+                        if (reviewDetails.getComment() != null) {
+                            review.setComment(reviewDetails.getComment());
+                        }
+                        Review updated = reviewRepository.save(review);
+                        return ResponseEntity.ok(updated);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterReviews(
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(required = false) Integer bookId) {
+        try {
+            List<Review> reviews = reviewRepository.findAll();
+            
+            if (rating != null) {
+                reviews = reviews.stream()
+                        .filter(r -> r.getRating().equals(rating))
+                        .toList();
+            }
+            
+            if (bookId != null) {
+                reviews = reviews.stream()
+                        .filter(r -> r.getBook() != null && r.getBook().getBookId().equals(bookId))
+                        .toList();
+            }
+            
+            return ResponseEntity.ok(reviews);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 }

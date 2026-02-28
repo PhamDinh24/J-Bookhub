@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext'
 import { AuthContext } from '../context/AuthContext'
 import orderService from '../services/orderService'
 import paymentService from '../services/paymentService'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toastNotifications'
 import '../styles/Checkout.css'
 
 function Checkout() {
@@ -52,10 +53,14 @@ function Checkout() {
     setLoading(true)
 
     if (cartItems.length === 0) {
-      setError('Giỏ hàng trống. Vui lòng thêm sách trước khi thanh toán.')
+      const msg = 'Giỏ hàng trống. Vui lòng thêm sách trước khi thanh toán.'
+      setError(msg)
+      showError('❌ ' + msg)
       setLoading(false)
       return
     }
+
+    const toastId = showLoading('⏳ Đang xử lý đơn hàng...')
 
     try {
       // Create order
@@ -82,15 +87,22 @@ function Checkout() {
           returnUrl
         )
         
+        dismissToast(toastId)
+        showSuccess('✅ Đơn hàng đã được tạo thành công!')
         // Redirect to VNPay
         window.location.href = paymentResponse.data.paymentUrl
       } else {
         // COD payment
+        dismissToast(toastId)
+        showSuccess('✅ Đơn hàng đã được tạo thành công!')
         clearCart()
         navigate(`/payment-success?orderId=${orderId}&amount=${totalAmount}`)
       }
     } catch (err) {
-      setError('Lỗi khi tạo đơn hàng. Vui lòng thử lại.')
+      dismissToast(toastId)
+      const errorMsg = err.response?.data?.error || 'Lỗi khi tạo đơn hàng. Vui lòng thử lại.'
+      setError(errorMsg)
+      showError('❌ ' + errorMsg)
       console.error(err)
     } finally {
       setLoading(false)

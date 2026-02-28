@@ -124,8 +124,9 @@ public class ReportService {
                     .collect(Collectors.toList());
 
             for (OrderDetail detail : details) {
-                if (detail.getBook() != null && detail.getBook().getCategory() != null) {
-                    String categoryName = detail.getBook().getCategory().getName();
+                var book = bookRepository.findById(detail.getBookId()).orElse(null);
+                if (book != null && book.getCategory() != null) {
+                    String categoryName = book.getCategory().getName();
                     categoryMap.put(categoryName, categoryMap.getOrDefault(categoryName, 0) + detail.getQuantity());
                 }
             }

@@ -3,34 +3,38 @@ package com.bookstore.dto;
 import java.math.BigDecimal;
 
 public class BookDTO {
-    private Long id;
+    private Integer bookId;
     private String title;
     private String description;
-    private String author;
-    private String isbn;
     private BigDecimal price;
-    private Integer quantity;
-    private String category;
-    private String imageUrl;
-    private Double rating;
+    private Integer stockQuantity;
+    private Integer categoryId;
+    private Integer authorId;
+    private Integer publisherId;
+    private String isbn;
+    private Integer publicationYear;
+    private String coverImageUrl;
 
     public BookDTO() {}
 
-    public BookDTO(Long id, String title, String description, String author, String isbn, BigDecimal price, Integer quantity, String category, String imageUrl, Double rating) {
-        this.id = id;
+    public BookDTO(Integer bookId, String title, String description, BigDecimal price, Integer stockQuantity, 
+                   Integer categoryId, Integer authorId, Integer publisherId, String isbn, 
+                   Integer publicationYear, String coverImageUrl) {
+        this.bookId = bookId;
         this.title = title;
         this.description = description;
-        this.author = author;
-        this.isbn = isbn;
         this.price = price;
-        this.quantity = quantity;
-        this.category = category;
-        this.imageUrl = imageUrl;
-        this.rating = rating;
+        this.stockQuantity = stockQuantity;
+        this.categoryId = categoryId;
+        this.authorId = authorId;
+        this.publisherId = publisherId;
+        this.isbn = isbn;
+        this.publicationYear = publicationYear;
+        this.coverImageUrl = coverImageUrl;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getBookId() { return bookId; }
+    public void setBookId(Integer bookId) { this.bookId = bookId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -38,24 +42,27 @@ public class BookDTO {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+
+    public Integer getStockQuantity() { return stockQuantity; }
+    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+
+    public Integer getCategoryId() { return categoryId; }
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+
+    public Integer getAuthorId() { return authorId; }
+    public void setAuthorId(Integer authorId) { this.authorId = authorId; }
+
+    public Integer getPublisherId() { return publisherId; }
+    public void setPublisherId(Integer publisherId) { this.publisherId = publisherId; }
 
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public Integer getPublicationYear() { return publicationYear; }
+    public void setPublicationYear(Integer publicationYear) { this.publicationYear = publicationYear; }
 
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
-
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-
-    public Double getRating() { return rating; }
-    public void setRating(Double rating) { this.rating = rating; }
+    public String getCoverImageUrl() { return coverImageUrl; }
+    public void setCoverImageUrl(String coverImageUrl) { this.coverImageUrl = coverImageUrl; }
 }

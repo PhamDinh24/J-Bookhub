@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CartContext } from '../context/CartContext'
+import { showSuccess, showError } from '../utils/toastNotifications'
 import '../styles/Cart.css'
 
 function Cart() {
@@ -35,20 +36,26 @@ function Cart() {
               {cartItems.map((item) => (
                 <tr key={item.bookId}>
                   <td>{item.title}</td>
-                  <td>{item.price?.toLocaleString()} VND</td>
+                  <td>{item.price?.toLocaleString('vi-VN')} ₫</td>
                   <td>
                     <input
                       type="number"
                       min="1"
                       value={item.quantity}
-                      onChange={(e) => updateQuantity(item.bookId, parseInt(e.target.value))}
+                      onChange={(e) => {
+                        updateQuantity(item.bookId, parseInt(e.target.value))
+                        showSuccess('✅ Cập nhật số lượng thành công!')
+                      }}
                     />
                   </td>
-                  <td>{(item.price * item.quantity)?.toLocaleString()} VND</td>
+                  <td>{(item.price * item.quantity)?.toLocaleString('vi-VN')} ₫</td>
                   <td>
                     <button 
                       className="btn-delete"
-                      onClick={() => removeFromCart(item.bookId)}
+                      onClick={() => {
+                        removeFromCart(item.bookId)
+                        showSuccess('✅ Xóa khỏi giỏ hàng thành công!')
+                      }}
                     >
                       Xóa
                     </button>
@@ -59,7 +66,7 @@ function Cart() {
           </table>
           <div className="cart-summary">
             <h3>Tóm Tắt Đơn Hàng</h3>
-            <p>Tổng tiền: {totalPrice?.toLocaleString()} VND</p>
+            <p>Tổng tiền: {totalPrice?.toLocaleString('vi-VN')} ₫</p>
             <button 
               className="btn btn-primary"
               onClick={() => navigate('/checkout')}

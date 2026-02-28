@@ -3,6 +3,7 @@ com\bookstore\dto\AuthResponse.class
 com\bookstore\exception\GlobalExceptionHandler.class
 com\bookstore\controller\ImageController.class
 com\bookstore\exception\ForbiddenException.class
+com\bookstore\dto\ReportDTO$DailyRevenueDTO.class
 com\bookstore\model\Book.class
 com\bookstore\model\CartItem.class
 com\bookstore\util\Constants.class
@@ -20,12 +21,15 @@ com\bookstore\controller\BookController.class
 com\bookstore\model\User.class
 com\bookstore\repository\CartItemRepository.class
 com\bookstore\repository\ReviewRepository.class
+com\bookstore\dto\ReportDTO.class
 com\bookstore\controller\OrderController.class
 com\bookstore\controller\AuthController.class
 com\bookstore\controller\PaymentController.class
 com\bookstore\dto\UserDTO.class
 com\bookstore\repository\UserRepository.class
+com\bookstore\dto\ReportDTO$DailyOrderDTO.class
 com\bookstore\model\Author.class
+com\bookstore\service\MockCloudinaryService.class
 com\bookstore\config\SecurityConfig.class
 com\bookstore\repository\BookRepository.class
 com\bookstore\controller\TestController.class
@@ -40,6 +44,7 @@ com\bookstore\BookstoreApplication.class
 com\bookstore\service\UserService.class
 com\bookstore\controller\AdminController.class
 com\bookstore\controller\CategoryController.class
+com\bookstore\dto\ReportDTO$CategorySalesDTO.class
 com\bookstore\model\Review.class
 com\bookstore\model\Order.class
 com\bookstore\controller\AuthorController.class
@@ -50,6 +55,7 @@ com\bookstore\service\CloudinaryService.class
 com\bookstore\repository\CartRepository.class
 com\bookstore\model\Category.class
 com\bookstore\model\OrderDetail.class
+com\bookstore\service\ReportService.class
 com\bookstore\dto\ApiResponse.class
 com\bookstore\controller\ReviewController.class
 com\bookstore\dto\PasswordChangeRequest.class

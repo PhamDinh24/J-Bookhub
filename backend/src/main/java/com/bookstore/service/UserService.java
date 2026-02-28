@@ -54,4 +54,23 @@ public class UserService {
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    public User updateUserStatus(Integer userId, String status) {
+        return userRepository.findById(userId).map(user -> {
+            user.setAccountStatus(status);
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public List<User> searchUsers(String keyword) {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getFullName().toLowerCase().contains(keyword.toLowerCase()) ||
+                           u.getEmail().toLowerCase().contains(keyword.toLowerCase()))
+                .toList();
+    }
+
+    public List<com.bookstore.model.Order> getUserOrders(Integer userId) {
+        // This will be implemented when we have OrderRepository
+        return new java.util.ArrayList<>();
+    }
 }

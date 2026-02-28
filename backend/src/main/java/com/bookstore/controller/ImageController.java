@@ -1,7 +1,9 @@
 package com.bookstore.controller;
 
 import com.bookstore.service.CloudinaryService;
+import com.bookstore.service.MockCloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +18,24 @@ import java.util.Map;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class ImageController {
 
-    @Autowired
+    @Autowired(required = false)
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private MockCloudinaryService mockCloudinaryService;
+
+    @Value("${cloudinary.cloud-name:}")
+    private String cloudinaryCloudName;
 
     /**
      * Upload book cover image
+     * @param file MultipartFile to upload
+     * @param bookId Book ID to ensure unique image per book
      */
     @PostMapping("/upload/book-cover")
-    public ResponseEntity<?> uploadBookCover(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadBookCover(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "bookId", required = false) Integer bookId) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File is empty");
@@ -35,8 +47,25 @@ public class ImageController {
                 return ResponseEntity.badRequest().body("File must be an image");
             }
 
-            // Upload to Cloudinary
-            String imageUrl = cloudinaryService.uploadImage(file, "book-covers");
+            // Use appropriate service based on configuration
+            String imageUrl;
+            if (cloudinaryService != null && !cloudinaryCloudName.isEmpty()) {
+                // If bookId provided, use it to create unique public ID
+                if (bookId != null) {
+                    String publicId = "book_" + bookId + "_" + System.currentTimeMillis();
+                    imageUrl = cloudinaryService.uploadImageWithId(file, "book-covers", publicId);
+                } else {
+                    imageUrl = cloudinaryService.uploadImage(file, "book-covers");
+                }
+            } else {
+                // Mock service also supports uploadImageWithId
+                if (bookId != null) {
+                    String publicId = "book_" + bookId + "_" + System.currentTimeMillis();
+                    imageUrl = mockCloudinaryService.uploadImageWithId(file, "book-covers", publicId);
+                } else {
+                    imageUrl = mockCloudinaryService.uploadImage(file, "book-covers");
+                }
+            }
 
             Map<String, String> response = new HashMap<>();
             response.put("url", imageUrl);
@@ -65,8 +94,13 @@ public class ImageController {
                 return ResponseEntity.badRequest().body("File must be an image");
             }
 
-            // Upload to Cloudinary
-            String imageUrl = cloudinaryService.uploadImage(file, "avatars");
+            // Use appropriate service based on configuration
+            String imageUrl;
+            if (cloudinaryService != null && !cloudinaryCloudName.isEmpty()) {
+                imageUrl = cloudinaryService.uploadImage(file, "avatars");
+            } else {
+                imageUrl = mockCloudinaryService.uploadImage(file, "avatars");
+            }
 
             Map<String, String> response = new HashMap<>();
             response.put("url", imageUrl);
@@ -97,8 +131,13 @@ public class ImageController {
                 return ResponseEntity.badRequest().body("File must be an image");
             }
 
-            // Upload to Cloudinary
-            String imageUrl = cloudinaryService.uploadImage(file, folder);
+            // Use appropriate service based on configuration
+            String imageUrl;
+            if (cloudinaryService != null && !cloudinaryCloudName.isEmpty()) {
+                imageUrl = cloudinaryService.uploadImage(file, folder);
+            } else {
+                imageUrl = mockCloudinaryService.uploadImage(file, folder);
+            }
 
             Map<String, String> response = new HashMap<>();
             response.put("url", imageUrl);

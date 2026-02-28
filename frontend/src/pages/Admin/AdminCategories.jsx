@@ -1,17 +1,29 @@
 import { useState, useEffect } from 'react'
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal'
+import { showSuccess, showError } from '../../utils/toastNotifications'
 import '../../styles/Admin.css'
 
 function AdminCategories() {
   const [categories, setCategories] = useState([])
+  const [filteredCategories, setFilteredCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(null)
   const [formData, setFormData] = useState({ name: '', description: '' })
   const [message, setMessage] = useState({ type: '', text: '' })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const itemsPerPage = 10
 
   useEffect(() => {
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    applyFilters()
+  }, [categories, searchTerm])
 
   const fetchCategories = async () => {
     try {
@@ -25,6 +37,28 @@ function AdminCategories() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyFilters = () => {
+    let result = [...categories]
+
+    if (searchTerm) {
+      result = result.filter(cat =>
+        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cat.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    setFilteredCategories(result)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const handleClearSearch = () => {
+    setSearchTerm('')
   }
 
   const handleSubmit = async (e) => {
@@ -46,12 +80,16 @@ function AdminCategories() {
         setEditingId(null)
         setShowForm(false)
         fetchCategories()
-        setMessage({ type: 'success', text: editingId ? '✅ Cập nhật thành công' : '✅ Thêm thành công' })
+        const successMsg = editingId ? '✅ Cập nhật thành công' : '✅ Thêm thành công'
+        setMessage({ type: 'success', text: successMsg })
+        showSuccess(successMsg)
         setTimeout(() => setMessage({ type: '', text: '' }), 3000)
       }
     } catch (err) {
       console.error('Error:', err)
-      setMessage({ type: 'error', text: '❌ Lỗi: ' + err.message })
+      const errorMsg = '❌ Lỗi: ' + err.message
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
     }
   }
 
@@ -61,40 +99,77 @@ function AdminCategories() {
     setShowForm(true)
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Bạn chắc chắn muốn xóa danh mục này?')) return
+  const handleDelete = (id) => {
+    const category = categories.find(c => c.categoryId === id)
+    setDeleteTarget({ id, title: category?.name || 'Danh mục' })
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
     try {
-      await fetch(`http://localhost:8080/api/categories/${id}`, { method: 'DELETE' })
+      setLoading(true)
+      await fetch(`http://localhost:8080/api/categories/${deleteTarget.id}`, { method: 'DELETE' })
       fetchCategories()
-      setMessage({ type: 'success', text: '✅ Xóa thành công' })
+      const successMsg = '✅ Xóa thành công'
+      setMessage({ type: 'success', text: successMsg })
+      showSuccess(successMsg)
+      setShowDeleteConfirm(false)
+      setDeleteTarget(null)
       setTimeout(() => setMessage({ type: '', text: '' }), 3000)
     } catch (err) {
-      setMessage({ type: 'error', text: '❌ Lỗi: ' + err.message })
+      const errorMsg = '❌ Lỗi: ' + err.message
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+    } finally {
+      setLoading(false)
     }
   }
 
-  if (loading) return <div className="loading">⏳ Đang tải...</div>
+  if (loading) return <div className="loading">Đang tải...</div>
 
   return (
     <div className="admin-page">
-      <h1>🏷️ Quản Lý Danh Mục</h1>
-
       {message.text && (
         <div className={`${message.type}-message`} style={{ marginBottom: '1.5rem' }}>
           {message.text}
         </div>
       )}
 
-      <button 
-        className="btn btn-primary"
-        onClick={() => {
-          setShowForm(!showForm)
-          setEditingId(null)
-          setFormData({ name: '', description: '' })
-        }}
-      >
-        {showForm ? '❌ Hủy' : '➕ Thêm Danh Mục'}
-      </button>
+      <div className="admin-header">
+        <h1>Quản Lý Danh Mục</h1>
+        <button 
+          className="btn-add"
+          onClick={() => {
+            setShowForm(!showForm)
+            setEditingId(null)
+            setFormData({ name: '', description: '' })
+          }}
+        >
+          {showForm ? 'Hủy' : 'Thêm Danh Mục'}
+        </button>
+      </div>
+
+      <div className="filter-section">
+        <div className="filter-row">
+          <div className="filter-group" style={{ flex: 1 }}>
+            <label>Tìm Kiếm</label>
+            <input 
+              type="text" 
+              placeholder="Tìm theo tên hoặc mô tả..." 
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
+            <button className="btn-secondary" onClick={handleClearSearch}>Xóa Tìm Kiếm</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="results-info">
+        <p>Hiển thị {filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).length} / {filteredCategories.length} kết quả</p>
+      </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="admin-form">
@@ -118,7 +193,7 @@ function AdminCategories() {
             />
           </div>
           <button type="submit" className="btn btn-success">
-            {editingId ? '💾 Cập Nhật' : '➕ Thêm'}
+            {editingId ? 'Cập Nhật' : 'Thêm'}
           </button>
         </form>
       )}
@@ -134,30 +209,64 @@ function AdminCategories() {
             </tr>
           </thead>
           <tbody>
-            {categories.map(cat => (
+            {filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(cat => (
               <tr key={cat.categoryId}>
                 <td><strong>#{cat.categoryId}</strong></td>
                 <td>{cat.name}</td>
                 <td>{cat.description?.substring(0, 50)}{cat.description?.length > 50 ? '...' : ''}</td>
                 <td>
-                  <button 
-                    className="btn-edit"
-                    onClick={() => handleEdit(cat)}
-                  >
-                    ✏️ Sửa
-                  </button>
-                  <button 
-                    className="btn-delete"
-                    onClick={() => handleDelete(cat.categoryId)}
-                  >
-                    🗑️ Xóa
-                  </button>
+                  <div className="action-buttons">
+                    <button 
+                      className="btn-edit"
+                      title="Sửa"
+                      onClick={() => handleEdit(cat)}
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      className="btn-delete"
+                      title="Xóa"
+                      onClick={() => handleDelete(cat.categoryId)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {filteredCategories.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            ← Trước
+          </button>
+          <span>Trang {currentPage} / {Math.ceil(filteredCategories.length / itemsPerPage)}</span>
+          <button 
+            onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredCategories.length / itemsPerPage), p + 1))}
+            disabled={currentPage === Math.ceil(filteredCategories.length / itemsPerPage)}
+          >
+            Sau →
+          </button>
+        </div>
+      )}
+
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        title={deleteTarget?.title}
+        message="Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowDeleteConfirm(false)
+          setDeleteTarget(null)
+        }}
+        isLoading={loading}
+      />
     </div>
   )
 }

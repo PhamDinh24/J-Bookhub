@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import ImageUpload from '../components/ImageUpload'
 import api from '../services/api'
+import { showSuccess, showError } from '../utils/toastNotifications'
 import '../styles/Profile.css'
 
 function Profile() {
@@ -52,10 +53,13 @@ function Profile() {
 
     try {
       await api.put(`/users/${user.userId}`, formData)
+      showSuccess('✅ Cập nhật thông tin thành công!')
       setMessage('Cập nhật thông tin thành công!')
       setTimeout(() => setMessage(''), 3000)
     } catch (err) {
-      setError('Lỗi cập nhật thông tin')
+      const errorMsg = err.response?.data?.error || 'Lỗi cập nhật thông tin'
+      setError(errorMsg)
+      showError('❌ ' + errorMsg)
       console.error(err)
     } finally {
       setLoading(false)
@@ -69,7 +73,9 @@ function Profile() {
     const confirmPassword = e.target.confirmPassword.value
 
     if (newPassword !== confirmPassword) {
-      setError('Mật khẩu mới không khớp')
+      const msg = 'Mật khẩu mới không khớp'
+      setError(msg)
+      showError('❌ ' + msg)
       return
     }
 
@@ -82,11 +88,14 @@ function Profile() {
         oldPassword,
         newPassword
       })
+      showSuccess('✅ Đổi mật khẩu thành công!')
       setMessage('Đổi mật khẩu thành công!')
       e.target.reset()
       setTimeout(() => setMessage(''), 3000)
     } catch (err) {
-      setError('Lỗi đổi mật khẩu. Vui lòng kiểm tra mật khẩu hiện tại.')
+      const errorMsg = err.response?.data?.error || 'Lỗi đổi mật khẩu. Vui lòng kiểm tra mật khẩu hiện tại.'
+      setError(errorMsg)
+      showError('❌ ' + errorMsg)
       console.error(err)
     } finally {
       setLoading(false)
@@ -98,12 +107,14 @@ function Profile() {
       ...prev,
       avatar: imageUrl
     }))
+    showSuccess('✅ Hình ảnh đại diện tải lên thành công!')
     setMessage('Hình ảnh đại diện tải lên thành công!')
     setTimeout(() => setMessage(''), 2000)
   }
 
   const handleLogout = () => {
     logout()
+    showSuccess('✅ Đăng xuất thành công!')
     navigate('/')
   }
 

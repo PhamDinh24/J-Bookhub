@@ -2,6 +2,7 @@ package com.bookstore.controller;
 
 import com.bookstore.dto.PasswordChangeRequest;
 import com.bookstore.model.User;
+import com.bookstore.model.Order;
 import com.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,5 +60,20 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<User> updateUserStatus(@PathVariable Integer id, @RequestBody User userDetails) {
+        return ResponseEntity.ok(userService.updateUserStatus(id, userDetails.getAccountStatus()));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam String keyword) {
+        return ResponseEntity.ok(userService.searchUsers(keyword));
+    }
+
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<List<Order>> getUserOrders(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getUserOrders(id));
     }
 }

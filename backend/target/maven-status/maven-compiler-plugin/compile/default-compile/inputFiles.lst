@@ -19,6 +19,8 @@ D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\model\Category.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\controller\HealthController.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\model\Cart.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\service\UserService.java
+D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\dto\ReportDTO.java
+D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\service\ReportService.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\repository\UserRepository.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\controller\AdminController.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\service\OrderService.java
@@ -43,6 +45,7 @@ D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\controller\ReviewCo
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\model\Publisher.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\repository\OrderRepository.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\dto\PasswordChangeRequest.java
+D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\service\MockCloudinaryService.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\repository\CategoryRepository.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\dto\BookDTO.java
 D:\Git\Project\J-Bookhub\backend\src\main\java\com\bookstore\exception\GlobalExceptionHandler.java

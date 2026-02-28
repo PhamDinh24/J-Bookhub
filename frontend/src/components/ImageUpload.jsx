@@ -2,7 +2,7 @@ import { useState } from 'react'
 import imageService from '../services/imageService'
 import './ImageUpload.css'
 
-function ImageUpload({ onImageUpload, folder = 'general', type = 'general' }) {
+function ImageUpload({ onImageUpload, folder = 'general', type = 'general', bookId = null }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [preview, setPreview] = useState(null)
@@ -51,7 +51,7 @@ function ImageUpload({ onImageUpload, folder = 'general', type = 'general' }) {
     try {
       let response
       if (type === 'book-cover') {
-        response = await imageService.uploadBookCover(file)
+        response = await imageService.uploadBookCover(file, bookId)
       } else if (type === 'avatar') {
         response = await imageService.uploadAvatar(file)
       } else {

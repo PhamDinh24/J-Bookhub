@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import bookService from '../services/bookService'
+import categoryService from '../services/categoryService'
+import { showError } from '../utils/toastNotifications'
 import '../styles/Home.css'
 
 function Home() {
@@ -8,44 +10,42 @@ function Home() {
   const [bestsellerBooks, setBestsellerBooks] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchBooks()
-    fetchCategories()
+    fetchData()
   }, [])
 
-  const fetchBooks = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
-      const response = await bookService.getAllBooks()
-      const books = response.data || []
+      setError(null)
+      
+      const [booksRes, categoriesRes] = await Promise.all([
+        bookService.getAllBooks(),
+        categoryService.getAllCategories()
+      ])
 
-      // Get newest books (last 4 books)
+      const books = booksRes.data || []
       const newest = books.slice(-4).reverse()
       setNewBooks(newest)
 
-      // Get bestsellers (books with highest stock as proxy for popularity)
       const bestsellers = books
         .sort((a, b) => (b.stockQuantity || 0) - (a.stockQuantity || 0))
         .slice(0, 4)
       setBestsellerBooks(bestsellers)
+
+      setCategories(categoriesRes.data || [])
     } catch (err) {
-      console.error('Lỗi khi tải sách:', err)
+      console.error('Lỗi khi tải dữ liệu:', err)
+      const errorMsg = 'Không thể tải dữ liệu. Vui lòng thử lại sau.'
+      setError(errorMsg)
+      showError('❌ ' + errorMsg)
       setNewBooks([])
       setBestsellerBooks([])
+      setCategories([])
     } finally {
       setLoading(false)
-    }
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/categories')
-      const data = await response.json()
-      setCategories(data || [])
-    } catch (err) {
-      console.error('Lỗi khi tải danh mục:', err)
-      setCategories([])
     }
   }
 
@@ -53,7 +53,7 @@ function Home() {
     <div className="home">
       <section className="hero">
         <div className="hero-content">
-          <h1>Chào Mừng Đến Bookstore</h1>
+          <h1>Chào Mừng Đến J-Bookhub</h1>
           <p>Khám phá hàng ngàn cuốn sách hay từ các tác giả nổi tiếng</p>
           <Link to="/books" className="btn btn-primary">
             Mua Sách Ngay
@@ -75,6 +75,8 @@ function Home() {
           <p>Nếu không hài lòng</p>
         </div>
       </section>
+
+      {error && <div className="error-banner">{error}</div>}
 
       {/* Categories Section */}
       <section className="categories-section">
@@ -108,7 +110,9 @@ function Home() {
           <Link to="/books" className="view-all">Xem tất cả →</Link>
         </div>
         {loading ? (
-          <div className="loading">Đang tải...</div>
+          <div className="loading">⏳ Đang tải...</div>
+        ) : newBooks.length === 0 ? (
+          <div className="empty-state">Chưa có sách mới</div>
         ) : (
           <div className="books-grid">
             {newBooks.map(book => (
@@ -121,12 +125,13 @@ function Home() {
                   <img 
                     src={book.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="280"%3E%3Crect fill="%23ddd" width="200" height="280"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E'} 
                     alt={book.title}
+                    loading="lazy"
                   />
                   <span className="badge new">Mới</span>
                 </div>
                 <div className="book-card-info">
                   <h3>{book.title}</h3>
-                  <p className="book-price">{book.price?.toLocaleString()} ₫</p>
+                  <p className="book-price">{book.price?.toLocaleString('vi-VN')} ₫</p>
                   <p className="book-stock">
                     {book.stockQuantity > 0 ? '✓ Còn hàng' : '✗ Hết hàng'}
                   </p>
@@ -144,7 +149,9 @@ function Home() {
           <Link to="/books" className="view-all">Xem tất cả →</Link>
         </div>
         {loading ? (
-          <div className="loading">Đang tải...</div>
+          <div className="loading">⏳ Đang tải...</div>
+        ) : bestsellerBooks.length === 0 ? (
+          <div className="empty-state">Chưa có sách bán chạy</div>
         ) : (
           <div className="books-grid">
             {bestsellerBooks.map(book => (
@@ -157,12 +164,13 @@ function Home() {
                   <img 
                     src={book.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="280"%3E%3Crect fill="%23ddd" width="200" height="280"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E'} 
                     alt={book.title}
+                    loading="lazy"
                   />
                   <span className="badge bestseller">Bán Chạy</span>
                 </div>
                 <div className="book-card-info">
                   <h3>{book.title}</h3>
-                  <p className="book-price">{book.price?.toLocaleString()} ₫</p>
+                  <p className="book-price">{book.price?.toLocaleString('vi-VN')} ₫</p>
                   <p className="book-stock">
                     {book.stockQuantity > 0 ? '✓ Còn hàng' : '✗ Hết hàng'}
                   </p>

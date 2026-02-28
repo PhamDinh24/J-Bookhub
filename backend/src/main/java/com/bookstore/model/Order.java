@@ -34,6 +34,18 @@ public class Order {
     @JsonProperty("shippingAddress")
     private String shippingAddress;
 
+    @Column(name = "cancellation_reason", columnDefinition = "TEXT")
+    @JsonProperty("cancellationReason")
+    private String cancellationReason;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonProperty("createdAt")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @JsonProperty("updatedAt")
+    private LocalDateTime updatedAt;
+
     public Order() {}
 
     public Order(Integer orderId, Integer userId, LocalDateTime orderDate, String status, BigDecimal totalAmount, String shippingAddress) {
@@ -50,6 +62,17 @@ public class Order {
         if (orderDate == null) {
             orderDate = LocalDateTime.now();
         }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     public Integer getOrderId() { return orderId; }
@@ -69,4 +92,13 @@ public class Order {
 
     public String getShippingAddress() { return shippingAddress; }
     public void setShippingAddress(String shippingAddress) { this.shippingAddress = shippingAddress; }
+
+    public String getCancellationReason() { return cancellationReason; }
+    public void setCancellationReason(String cancellationReason) { this.cancellationReason = cancellationReason; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
