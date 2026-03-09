@@ -261,11 +261,11 @@ function AdminReports() {
 
   return (
     <div className="admin-page">
-      <h1>📊 Báo Cáo & Thống Kê</h1>
+      <h1>Báo Cáo & Thống Kê</h1>
 
       {error && (
         <div className="error-message" style={{ marginBottom: '1.5rem' }}>
-          ⚠️ {error}
+          {error}
         </div>
       )}
 
@@ -288,19 +288,19 @@ function AdminReports() {
             className={`filter-btn ${dateRange === 'month' ? 'active' : ''}`}
             onClick={() => setDefaultDateRange('month')}
           >
-            📅 Tháng
+            Tháng
           </button>
           <button 
             className={`filter-btn ${dateRange === 'quarter' ? 'active' : ''}`}
             onClick={() => setDefaultDateRange('quarter')}
           >
-            📊 Quý
+            Quý
           </button>
           <button 
             className={`filter-btn ${dateRange === 'year' ? 'active' : ''}`}
             onClick={() => setDefaultDateRange('year')}
           >
-            📈 Năm
+            Năm
           </button>
         </div>
 
@@ -335,15 +335,15 @@ function AdminReports() {
             <p className="summary-value">{reportData.totalRevenue?.toLocaleString('vi-VN')} ₫</p>
           </div>
           <div className="summary-card">
-            <h3>📦 Tổng Đơn Hàng</h3>
+            <h3>Tổng Đơn Hàng</h3>
             <p className="summary-value">{reportData.totalOrders}</p>
           </div>
           <div className="summary-card">
-            <h3>👥 Tổng Người Dùng</h3>
+            <h3>Tổng Người Dùng</h3>
             <p className="summary-value">{reportData.totalUsers}</p>
           </div>
           <div className="summary-card">
-            <h3>📚 Tổng Sách</h3>
+            <h3>Tổng Sách</h3>
             <p className="summary-value">{reportData.totalBooks}</p>
           </div>
         </div>
@@ -352,17 +352,17 @@ function AdminReports() {
       {/* Charts */}
       <div className="charts-grid">
         <div className="chart-container">
-          <h2>📈 Doanh Thu Theo Ngày</h2>
+          <h2>Doanh Thu Theo Ngày</h2>
           <Line data={revenueChartData} options={chartOptions} />
         </div>
 
         <div className="chart-container">
-          <h2>📊 Đơn Hàng Theo Ngày</h2>
+          <h2>Đơn Hàng Theo Ngày</h2>
           <Bar data={orderChartData} options={chartOptions} />
         </div>
 
         <div className="chart-container">
-          <h2>🎯 Trạng Thái Đơn Hàng</h2>
+          <h2>Trạng Thái Đơn Hàng</h2>
           <Doughnut data={statusChartData} options={chartOptions} />
         </div>
 

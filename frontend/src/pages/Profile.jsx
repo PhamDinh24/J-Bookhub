@@ -148,25 +148,25 @@ function Profile() {
               className={`menu-item ${activeTab === 'info' ? 'active' : ''}`}
               onClick={() => setActiveTab('info')}
             >
-              ℹ️ Thông Tin Cá Nhân
+              Thông Tin Cá Nhân
             </button>
             <button
               className={`menu-item ${activeTab === 'password' ? 'active' : ''}`}
               onClick={() => setActiveTab('password')}
             >
-              🔐 Đổi Mật Khẩu
+              Đổi Mật Khẩu
             </button>
             <button
               className={`menu-item ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => setActiveTab('orders')}
             >
-              📦 Đơn Hàng Của Tôi
+              Đơn Hàng Của Tôi
             </button>
             <button
               className="menu-item logout"
               onClick={handleLogout}
             >
-              🚪 Đăng Xuất
+              Đăng Xuất
             </button>
           </nav>
         </aside>

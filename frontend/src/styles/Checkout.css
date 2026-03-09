@@ -3,13 +3,13 @@
   margin: 0 auto;
   padding: 2rem 1rem;
   min-height: calc(100vh - 200px);
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  background: #f9fafb;
 }
 
 .checkout-container h1 {
   margin-bottom: 2rem;
   font-size: 2rem;
-  color: #1e3c72;
+  color: #2d3748;
   font-weight: 700;
 }
 
@@ -30,10 +30,10 @@
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   margin-top: 2rem;
-  color: #1e3c72;
+  color: #2d3748;
   font-weight: 700;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e8eef5;
+  border-bottom: 2px solid #cbd5e0;
 }
 
 .checkout-form h2:first-child {
@@ -70,8 +70,8 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #2a5298;
-  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+  border-color: #4c63d2;
+  box-shadow: 0 0 0 3px rgba(76, 99, 210, 0.1);
 }
 
 .form-group input:disabled {
@@ -103,8 +103,8 @@
 }
 
 .payment-option:hover {
-  border-color: #2a5298;
-  background-color: #f8f9fc;
+  border-color: #4c63d2;
+  background-color: #f7fafc;
 }
 
 .payment-option input[type="radio"] {
@@ -115,7 +115,7 @@
 }
 
 .payment-option input[type="radio"]:checked + .option-label {
-  color: #2a5298;
+  color: #4c63d2;
 }
 
 .option-label {
@@ -149,19 +149,19 @@
   padding: 1.2rem;
   font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+  background: #4c63d2;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+  box-shadow: 0 2px 8px rgba(76, 99, 210, 0.2);
   margin-top: 1.5rem;
 }
 
 .btn-large:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+  box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
 }
 
 .btn-large:disabled {
@@ -182,7 +182,7 @@
 .checkout-summary h2 {
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
-  color: #1e3c72;
+  color: #2d3748;
   font-weight: 700;
 }
 
@@ -222,7 +222,7 @@
 
 .item-price {
   font-weight: 600;
-  color: #2a5298;
+  color: #4c63d2;
   white-space: nowrap;
 }
 
@@ -242,9 +242,9 @@
 .summary-row.total {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #2a5298;
+  color: #4c63d2;
   padding-top: 1rem;
-  border-top: 2px solid #e8eef5;
+  border-top: 2px solid #e2e8f0;
 }
 
 .empty-cart {

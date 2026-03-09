@@ -8,7 +8,7 @@ import { showSuccess, showError, showLoading, dismissToast } from '../utils/toas
 import '../styles/Checkout.css'
 
 function Checkout() {
-  const { cartItems, clearCart } = useContext(CartContext)
+  const { getSelectedItems, getSelectedTotalPrice, removeSelectedItems } = useContext(CartContext)
   const { isAuthenticated, user } = useContext(AuthContext)
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -26,6 +26,14 @@ function Checkout() {
       navigate('/login')
       return
     }
+    
+    const selectedItems = getSelectedItems()
+    if (selectedItems.length === 0) {
+      showError('❌ Vui lòng chọn ít nhất một sách để thanh toán')
+      navigate('/cart')
+      return
+    }
+    
     if (user) {
       setFormData(prev => ({
         ...prev,
@@ -37,7 +45,8 @@ function Checkout() {
     }
   }, [isAuthenticated, user, navigate])
 
-  const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const selectedItems = getSelectedItems()
+  const totalAmount = getSelectedTotalPrice()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -52,7 +61,7 @@ function Checkout() {
     setError('')
     setLoading(true)
 
-    if (cartItems.length === 0) {
+    if (selectedItems.length === 0) {
       const msg = 'Giỏ hàng trống. Vui lòng thêm sách trước khi thanh toán.'
       setError(msg)
       showError('❌ ' + msg)
@@ -78,24 +87,27 @@ function Checkout() {
       const orderId = orderResponse.data.orderId
 
       if (formData.paymentMethod === 'VNPay') {
-        // Create VNPay payment URL
+        // Create VNPay payment URL - amount in VND (not cents)
         const returnUrl = `${window.location.origin}/payment-success?orderId=${orderId}&amount=${totalAmount}`
         const paymentResponse = await paymentService.createVNPayUrl(
           orderId,
-          totalAmount * 100,
+          totalAmount,
           `Thanh toan don hang ${orderId}`,
           returnUrl
         )
         
         dismissToast(toastId)
         showSuccess('✅ Đơn hàng đã được tạo thành công!')
+        // Remove selected items from cart
+        removeSelectedItems()
         // Redirect to VNPay
         window.location.href = paymentResponse.data.paymentUrl
       } else {
         // COD payment
         dismissToast(toastId)
         showSuccess('✅ Đơn hàng đã được tạo thành công!')
-        clearCart()
+        // Remove selected items from cart
+        removeSelectedItems()
         navigate(`/payment-success?orderId=${orderId}&amount=${totalAmount}`)
       }
     } catch (err) {
@@ -213,10 +225,10 @@ function Checkout() {
           <h2>Tóm Tắt Đơn Hàng</h2>
           
           <div className="order-items">
-            {cartItems.length === 0 ? (
-              <p className="empty-cart">Giỏ hàng trống</p>
+            {selectedItems.length === 0 ? (
+              <p className="empty-cart">Không có sách được chọn</p>
             ) : (
-              cartItems.map(item => (
+              selectedItems.map(item => (
                 <div key={item.bookId} className="order-item">
                   <div className="item-info">
                     <h4>{item.title}</h4>

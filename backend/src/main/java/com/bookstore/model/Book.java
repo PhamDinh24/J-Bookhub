@@ -1,6 +1,7 @@
 package com.bookstore.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,8 @@ public class Book {
     private Integer bookId;
 
     @Column(nullable = false)
+    @NotBlank(message = "Book title cannot be blank")
+    @Size(min = 1, max = 255, message = "Book title must be between 1 and 255 characters")
     private String title;
 
     @Column(unique = true)
@@ -24,12 +27,17 @@ public class Book {
     private String description;
 
     @Column(nullable = false)
+    @NotNull(message = "Price cannot be null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
     private BigDecimal price;
 
     @Column(name = "stock_quantity")
+    @Min(value = 0, message = "Stock quantity cannot be negative")
     private Integer stockQuantity = 0;
 
     @Column(name = "publication_year")
+    @Min(value = 1000, message = "Publication year must be valid")
+    @Max(value = 2100, message = "Publication year cannot be in the future")
     private Integer publicationYear;
 
     @Column(name = "cover_image_url")

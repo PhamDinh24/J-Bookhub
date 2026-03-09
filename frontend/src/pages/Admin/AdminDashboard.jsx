@@ -452,7 +452,7 @@ function AdminDashboard() {
         </div>
 
         <div className="stat-card-main">
-          <div className="stat-card-icon">📚</div>
+          <div className="stat-card-icon">📖</div>
           <div className="stat-card-content">
             <h3>Tổng Sách Bán</h3>
             <p className="stat-card-number">{stats?.books?.total || 0}</p>
@@ -504,7 +504,7 @@ function AdminDashboard() {
             <div key={book.bookId} className="book-card-main">
               <div className="book-rank-badge">Top {index + 1}</div>
               <div className="book-image-placeholder">
-                <img src={book.coverImageUrl || 'https://via.placeholder.com/200x280?text=Sach'} alt={book.title} />
+                <img src={book.coverImageUrl || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="280"%3E%3Crect fill="%23ddd" width="200" height="280"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E'} alt={book.title} />
               </div>
               <div className="book-card-info">
                 <h4>{book.title}</h4>

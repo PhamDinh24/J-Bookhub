@@ -19,7 +19,7 @@ function NotFound() {
         </div>
 
         <div className="illustration">
-          📚❌
+          404
         </div>
       </div>
     </div>

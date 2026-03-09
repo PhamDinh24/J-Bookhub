@@ -15,7 +15,7 @@
 .book-list-header h1 {
   margin: 0 0 1.5rem 0;
   font-size: 2.2rem;
-  color: #1a1a2e;
+  color: #2d3748;
   font-weight: 900;
   letter-spacing: -0.5px;
 }
@@ -38,20 +38,20 @@
 
 .search-form input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: #4c63d2;
+  box-shadow: 0 0 0 4px rgba(76, 99, 210, 0.1);
 }
 
 .search-form button {
   padding: 0.9rem 2.2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #4c63d2;
   color: white;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 800;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 8px rgba(76, 99, 210, 0.2);
   text-transform: uppercase;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
@@ -59,7 +59,7 @@
 
 .search-form button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
 }
 
 .error-message {
@@ -87,12 +87,12 @@
 .results-info {
   margin-bottom: 1.5rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #2d3748;
   font-size: 0.95rem;
   padding: 1.2rem;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: #f7fafc;
   border-radius: 10px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #4c63d2;
 }
 
 .books-grid {
@@ -115,8 +115,8 @@
 
 .book-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-  border-color: #667eea;
+  box-shadow: 0 16px 40px rgba(76, 99, 210, 0.12);
+  border-color: #4c63d2;
 }
 
 .book-image-wrapper {
@@ -162,7 +162,7 @@
 .book-title {
   font-size: 1rem;
   font-weight: 800;
-  color: #1a1a2e;
+  color: #2d3748;
   margin: 0 0 0.6rem 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -186,7 +186,7 @@
 
 .book-price {
   font-weight: 900;
-  color: #667eea;
+  color: #4c63d2;
   font-size: 1.3rem;
   margin: 0.8rem 0 0.6rem 0;
 }
@@ -194,7 +194,7 @@
 .btn-add-cart {
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #4c63d2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -205,12 +205,12 @@
   text-transform: uppercase;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 2px 8px rgba(76, 99, 210, 0.2);
 }
 
 .btn-add-cart:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
 }
 
 .btn-add-cart:disabled {
@@ -234,10 +234,10 @@
 .filters-sidebar h3 {
   font-size: 1.3rem;
   font-weight: 900;
-  color: #667eea;
+  color: #4c63d2;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 3px solid #667eea;
+  border-bottom: 3px solid #4c63d2;
   letter-spacing: -0.5px;
 }
 
@@ -248,7 +248,7 @@
 .filter-group label {
   display: block;
   font-weight: 800;
-  color: #1a1a2e;
+  color: #2d3748;
   font-size: 0.95rem;
   margin-bottom: 0.8rem;
   text-transform: uppercase;
@@ -259,7 +259,7 @@
 .filter-group select {
   width: 100%;
   padding: 0.9rem;
-  border: 2px solid #e8e8f0;
+  border: 2px solid #cbd5e0;
   border-radius: 8px;
   font-size: 0.95rem;
   background-color: white;
@@ -269,13 +269,13 @@
 }
 
 .filter-group select:hover {
-  border-color: #667eea;
+  border-color: #4c63d2;
 }
 
 .filter-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: #4c63d2;
+  box-shadow: 0 0 0 4px rgba(76, 99, 210, 0.1);
 }
 
 .loading {

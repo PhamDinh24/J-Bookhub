@@ -190,7 +190,7 @@ function AdminReviews() {
 
       <div className="filter-section">
         <div className="filter-row">
-          <div className="filter-group" style={{ flex: 1 }}>
+          <div className="filter-group search-group">
             <label>Tìm Kiếm</label>
             <input 
               type="text" 
@@ -198,6 +198,7 @@ function AdminReviews() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            <button className="btn-secondary" onClick={handleClearFilters}>Xóa</button>
           </div>
           <div className="filter-group">
             <label>Đánh Giá</label>
@@ -229,9 +230,6 @@ function AdminReviews() {
               value={dateRange.endDate}
               onChange={handleDateChange}
             />
-          </div>
-          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
-            <button className="btn-secondary" onClick={handleClearFilters}>Xóa Bộ Lọc</button>
           </div>
         </div>
       </div>

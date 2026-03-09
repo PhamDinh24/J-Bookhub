@@ -3,9 +3,11 @@ package com.bookstore.service;
 import com.bookstore.model.Order;
 import com.bookstore.model.OrderDetail;
 import com.bookstore.model.Book;
+import com.bookstore.model.Payment;
 import com.bookstore.repository.OrderRepository;
 import com.bookstore.repository.OrderDetailRepository;
 import com.bookstore.repository.BookRepository;
+import com.bookstore.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -25,6 +27,9 @@ public class OrderService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -49,9 +54,32 @@ public class OrderService {
 
     public Order updateOrder(Integer id, Order orderDetails) {
         return orderRepository.findById(id).map(order -> {
-            if (orderDetails.getStatus() != null) {
-                order.setStatus(orderDetails.getStatus());
+            String oldStatus = order.getStatus();
+            String newStatus = orderDetails.getStatus();
+            
+            if (newStatus != null) {
+                order.setStatus(newStatus);
+                
+                // Update stock when order is delivered
+                if ("delivered".equalsIgnoreCase(newStatus) && 
+                    !"delivered".equalsIgnoreCase(oldStatus)) {
+                    try {
+                        updateStockForDeliveredOrder(id);
+                    } catch (Exception e) {
+                        // Revert status if stock update fails
+                        order.setStatus(oldStatus);
+                        throw new RuntimeException("Failed to update stock: " + e.getMessage());
+                    }
+                }
+                
+                // Restore stock when order is cancelled
+                if ("cancelled".equalsIgnoreCase(newStatus) && 
+                    !"cancelled".equalsIgnoreCase(oldStatus) &&
+                    "delivered".equalsIgnoreCase(oldStatus)) {
+                    restoreStockForCancelledOrder(id);
+                }
             }
+            
             if (orderDetails.getTotalAmount() != null) {
                 order.setTotalAmount(orderDetails.getTotalAmount());
             }
@@ -61,6 +89,60 @@ public class OrderService {
             order.setUpdatedAt(LocalDateTime.now());
             return orderRepository.save(order);
         }).orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    private void updateStockForDeliveredOrder(Integer orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            throw new RuntimeException("No order details found for order: " + orderId);
+        }
+        
+        for (OrderDetail detail : orderDetails) {
+            Optional<Book> bookOpt = bookRepository.findById(detail.getBookId());
+            if (bookOpt.isPresent()) {
+                Book book = bookOpt.get();
+                int newStock = book.getStockQuantity() - detail.getQuantity();
+                
+                // Ensure stock doesn't go below 0
+                if (newStock < 0) {
+                    throw new RuntimeException("Insufficient stock for book: " + book.getTitle());
+                }
+                
+                book.setStockQuantity(newStock);
+                bookRepository.save(book);
+            } else {
+                throw new RuntimeException("Book not found: " + detail.getBookId());
+            }
+        }
+        
+        // Set delivered timestamp
+        order.setDeliveredAt(LocalDateTime.now());
+        orderRepository.save(order);
+        
+        // Update payment status to completed
+        Optional<Payment> payment = paymentRepository.findByOrderId(orderId);
+        if (payment.isPresent()) {
+            Payment p = payment.get();
+            p.setStatus("completed");
+            paymentRepository.save(p);
+        }
+    }
+
+    private void restoreStockForCancelledOrder(Integer orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        
+        for (OrderDetail detail : orderDetails) {
+            Optional<Book> bookOpt = bookRepository.findById(detail.getBookId());
+            if (bookOpt.isPresent()) {
+                Book book = bookOpt.get();
+                book.setStockQuantity(book.getStockQuantity() + detail.getQuantity());
+                bookRepository.save(book);
+            }
+        }
     }
 
     public void deleteOrder(Integer id) {

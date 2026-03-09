@@ -19,12 +19,12 @@ export function CartProvider({ children }) {
       setCartItems(
         cartItems.map((item) =>
           item.bookId === book.bookId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + 1, selected: true }
             : item
         )
       )
     } else {
-      setCartItems([...cartItems, { ...book, quantity: 1 }])
+      setCartItems([...cartItems, { ...book, quantity: 1, selected: true }])
     }
   }
 
@@ -44,6 +44,22 @@ export function CartProvider({ children }) {
     }
   }
 
+  const toggleItemSelection = (bookId) => {
+    setCartItems(
+      cartItems.map((item) =>
+        item.bookId === bookId ? { ...item, selected: !item.selected } : item
+      )
+    )
+  }
+
+  const selectAllItems = () => {
+    setCartItems(cartItems.map((item) => ({ ...item, selected: true })))
+  }
+
+  const deselectAllItems = () => {
+    setCartItems(cartItems.map((item) => ({ ...item, selected: false })))
+  }
+
   const clearCart = () => {
     setCartItems([])
   }
@@ -56,6 +72,18 @@ export function CartProvider({ children }) {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
 
+  const getSelectedItems = () => {
+    return cartItems.filter((item) => item.selected)
+  }
+
+  const getSelectedTotalPrice = () => {
+    return getSelectedItems().reduce((total, item) => total + (item.price * item.quantity), 0)
+  }
+
+  const removeSelectedItems = () => {
+    setCartItems(cartItems.filter((item) => !item.selected))
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -63,9 +91,15 @@ export function CartProvider({ children }) {
         addToCart,
         removeFromCart,
         updateQuantity,
+        toggleItemSelection,
+        selectAllItems,
+        deselectAllItems,
         clearCart,
         getTotalItems,
         getTotalPrice,
+        getSelectedItems,
+        getSelectedTotalPrice,
+        removeSelectedItems,
       }}
     >
       {children}

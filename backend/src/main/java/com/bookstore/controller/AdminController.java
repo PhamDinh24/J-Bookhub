@@ -58,8 +58,9 @@ public class AdminController {
                 .filter(o -> "completed".equals(o.getStatus()))
                 .count();
             
-            // Revenue statistics
+            // Revenue statistics (only from delivered orders)
             double totalRevenue = orderRepository.findAll().stream()
+                .filter(o -> "delivered".equals(o.getStatus()))
                 .mapToDouble(o -> o.getTotalAmount().doubleValue())
                 .sum();
             

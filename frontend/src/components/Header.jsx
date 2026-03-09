@@ -29,42 +29,44 @@ function Header() {
     <header className="header">
       <div className="header-container">
         <Link to="/" className="logo" onClick={handleNavClick}>
-          📚 J-Bookhub
+          J-Bookhub
         </Link>
         
-        <button className="mobile-menu-btn" onClick={() => setShowMobileMenu(!showMobileMenu)}>
-          ☰
-        </button>
-
         <nav className={`nav ${showMobileMenu ? 'mobile-open' : ''}`}>
           <Link to="/" onClick={handleNavClick}>Trang Chủ</Link>
           <Link to="/books" onClick={handleNavClick}>Sách</Link>
           <Link to="/cart" className="cart-link" onClick={handleNavClick}>
-            🛒 Giỏ Hàng
+            Giỏ Hàng
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
-          
+          {isAuthenticated && (
+            <Link to="/orders" className="orders-link" onClick={handleNavClick}>
+              Đơn Hàng
+            </Link>
+          )}
+        </nav>
+
+        <div className="header-right">
           {isAuthenticated ? (
             <div className="user-menu-wrapper">
               <button 
                 className="user-menu-btn"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                {isAdmin ? '👨‍💼' : '👤'} {user?.fullName || 'Người dùng'}
+                {user?.fullName || 'Người dùng'}
               </button>
               {showDropdown && (
                 <div className="dropdown-menu">
                   {isAdmin && (
                     <>
                       <Link to="/admin" className="admin-link" onClick={handleNavClick}>
-                        ⚙️ Admin Panel
+                        Admin Panel
                       </Link>
                       <hr className="menu-divider" />
                     </>
                   )}
-                  <Link to="/profile" onClick={handleNavClick}>👤 Tài Khoản</Link>
-                  <Link to="/orders" onClick={handleNavClick}>📦 Đơn Hàng</Link>
-                  <button onClick={handleLogout} className="logout-btn">🚪 Đăng Xuất</button>
+                  <Link to="/profile" onClick={handleNavClick}>Tài Khoản</Link>
+                  <button onClick={handleLogout} className="logout-btn">Đăng Xuất</button>
                 </div>
               )}
             </div>
@@ -74,7 +76,11 @@ function Header() {
               <Link to="/signup" className="btn-signup" onClick={handleNavClick}>Đăng Ký</Link>
             </div>
           )}
-        </nav>
+        </div>
+
+        <button className="mobile-menu-btn" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+          ☰
+        </button>
       </div>
     </header>
   )

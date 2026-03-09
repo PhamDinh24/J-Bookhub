@@ -157,13 +157,24 @@ function BookDetail() {
               onClick={handleAddToCart}
               disabled={book.stockQuantity === 0}
             >
-              🛒 Thêm Vào Giỏ Hàng
+              Thêm Vào Giỏ Hàng
             </button>
             <button 
               className="btn btn-secondary btn-large"
-              onClick={() => navigate('/books')}
+              onClick={() => {
+                if (book.stockQuantity < quantity) {
+                  showError('❌ Số lượng tồn kho không đủ')
+                  return
+                }
+                for (let i = 0; i < quantity; i++) {
+                  addToCart(book)
+                }
+                showSuccess('✅ Thêm vào giỏ hàng thành công!')
+                navigate('/checkout')
+              }}
+              disabled={book.stockQuantity === 0}
             >
-              Tiếp Tục Mua Sắm
+              Mua Ngay
             </button>
           </div>
         </div>
@@ -171,7 +182,7 @@ function BookDetail() {
 
       {book.reviews && book.reviews.length > 0 && (
         <section className="reviews-section">
-          <h2>💬 Nhận Xét Từ Khách Hàng ({book.reviews.length})</h2>
+          <h2>Nhận Xét Từ Khách Hàng ({book.reviews.length})</h2>
           <div className="reviews-list">
             {book.reviews.map(review => (
               <div key={review.reviewId} className="review-item">
@@ -190,7 +201,7 @@ function BookDetail() {
 
       {relatedBooks.length > 0 && (
         <section className="related-books">
-          <h2>📚 Sách Liên Quan Trong Danh Mục</h2>
+          <h2>Sách Liên Quan Trong Danh Mục</h2>
           <div className="books-grid">
             {relatedBooks.map(relatedBook => (
               <Link 

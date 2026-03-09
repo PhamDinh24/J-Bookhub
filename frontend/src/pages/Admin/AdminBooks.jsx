@@ -316,7 +316,7 @@ function AdminBooks() {
 
       <div className="filter-section">
         <div className="filter-row">
-          <div className="filter-group" style={{ flex: 1 }}>
+          <div className="filter-group search-group">
             <label>Tìm Kiếm</label>
             <input 
               type="text" 
@@ -324,6 +324,7 @@ function AdminBooks() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            <button className="btn-secondary" onClick={handleClearFilters}>Xóa</button>
           </div>
           <div className="filter-group">
             <label>Danh Mục</label>
@@ -387,9 +388,6 @@ function AdminBooks() {
               <option value="in-stock">Còn hàng</option>
               <option value="out-of-stock">Hết hàng</option>
             </select>
-          </div>
-          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
-            <button className="btn-secondary" onClick={handleClearFilters}>Xóa Bộ Lọc</button>
           </div>
         </div>
       </div>

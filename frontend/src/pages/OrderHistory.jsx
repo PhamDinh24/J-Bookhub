@@ -2,12 +2,14 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
 import orderService from '../services/orderService'
+import OrderDetailModal from '../components/OrderDetailModal'
 import { showError } from '../utils/toastNotifications'
 import '../styles/OrderHistory.css'
 
 function OrderHistory() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedOrderId, setSelectedOrderId] = useState(null)
   const { user } = useContext(AuthContext)
   const navigate = useNavigate()
 
@@ -17,13 +19,19 @@ function OrderHistory() {
       return
     }
     fetchOrders()
+    // Scroll to top when page loads
+    window.scrollTo(0, 0)
   }, [user, navigate])
 
   const fetchOrders = async () => {
     try {
       const userId = user.userId
       const response = await orderService.getOrdersByUserId(userId)
-      setOrders(response.data || [])
+      // Sort by date - newest first
+      const sortedOrders = (response.data || []).sort((a, b) => 
+        new Date(b.orderDate) - new Date(a.orderDate)
+      )
+      setOrders(sortedOrders)
     } catch (err) {
       console.error('Lỗi khi tải lịch sử đơn hàng:', err)
       showError('❌ Lỗi khi tải lịch sử đơn hàng')
@@ -56,9 +64,24 @@ function OrderHistory() {
                 <p>Tổng tiền: {order.totalAmount?.toLocaleString()} VND</p>
                 <p>Địa chỉ: {order.shippingAddress}</p>
               </div>
+              <div className="order-actions">
+                <button 
+                  className="btn-detail"
+                  onClick={() => setSelectedOrderId(order.orderId)}
+                >
+                  Xem Chi Tiết
+                </button>
+              </div>
             </div>
           ))}
         </div>
+      )}
+
+      {selectedOrderId && (
+        <OrderDetailModal 
+          orderId={selectedOrderId}
+          onClose={() => setSelectedOrderId(null)}
+        />
       )}
     </div>
   )

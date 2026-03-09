@@ -5,6 +5,8 @@ const orderService = {
   
   getOrderById: (id) => api.get(`/orders/${id}`),
   
+  getOrderDetails: (id) => api.get(`/orders/${id}/details`),
+  
   getOrdersByUserId: (userId) => api.get(`/orders/user/${userId}`),
   
   createOrder: (order) => api.post('/orders', order),

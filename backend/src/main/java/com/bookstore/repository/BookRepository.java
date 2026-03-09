@@ -14,7 +14,11 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     List<Book> findByCategory(com.bookstore.model.Category category);
 
-    @Query("SELECT b FROM Book b WHERE b.title LIKE %:keyword% OR b.description LIKE %:keyword%")
+    @Query("SELECT b FROM Book b LEFT JOIN b.author a LEFT JOIN b.publisher p " +
+           "WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(b.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(a.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Book> searchBooks(@Param("keyword") String keyword);
 
     List<Book> findByAuthor(com.bookstore.model.Author author);

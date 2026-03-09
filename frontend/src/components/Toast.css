@@ -3,7 +3,7 @@
 :root {
   --toast-success: #10b981;
   --toast-error: #ef4444;
-  --toast-info: #3b82f6;
+  --toast-info: #4c63d2;
   --toast-warning: #f59e0b;
 }
 
@@ -62,7 +62,7 @@
 
 /* Info Toast */
 .react-hot-toast.info {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #4c63d2 0%, #3d4fa8 100%);
   color: white;
 }
 
@@ -86,7 +86,7 @@
 
 /* Loading Toast */
 .react-hot-toast.loading {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #4c63d2 0%, #3d4fa8 100%);
   color: white;
 }
 

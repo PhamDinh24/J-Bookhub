@@ -1,6 +1,7 @@
 package com.bookstore.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Order {
 
     @Column(name = "user_id")
     @JsonProperty("userId")
+    @NotNull(message = "User ID cannot be null")
     private Integer userId;
 
     @Column(name = "order_date", nullable = false, updatable = false)
@@ -24,14 +26,18 @@ public class Order {
 
     @Column(nullable = false)
     @JsonProperty("status")
+    @Pattern(regexp = "^(pending|processing|shipped|delivered|cancelled)$", message = "Invalid order status")
     private String status = "pending";
 
     @Column(name = "total_amount", nullable = false)
     @JsonProperty("totalAmount")
+    @NotNull(message = "Total amount cannot be null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Total amount must be greater than or equal to 0")
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Column(name = "shipping_address", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("shippingAddress")
+    @NotBlank(message = "Shipping address cannot be blank")
     private String shippingAddress;
 
     @Column(name = "cancellation_reason", columnDefinition = "TEXT")
@@ -45,6 +51,10 @@ public class Order {
     @Column(name = "updated_at")
     @JsonProperty("updatedAt")
     private LocalDateTime updatedAt;
+
+    @Column(name = "delivered_at")
+    @JsonProperty("deliveredAt")
+    private LocalDateTime deliveredAt;
 
     public Order() {}
 
@@ -101,4 +111,7 @@ public class Order {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public LocalDateTime getDeliveredAt() { return deliveredAt; }
+    public void setDeliveredAt(LocalDateTime deliveredAt) { this.deliveredAt = deliveredAt; }
 }

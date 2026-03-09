@@ -152,7 +152,7 @@ function AdminAuthors() {
 
       <div className="filter-section">
         <div className="filter-row">
-          <div className="filter-group" style={{ flex: 1 }}>
+          <div className="filter-group search-group">
             <label>Tìm Kiếm</label>
             <input 
               type="text" 
@@ -160,9 +160,7 @@ function AdminAuthors() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
-          </div>
-          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
-            <button className="btn-secondary" onClick={handleClearSearch}>Xóa Tìm Kiếm</button>
+            <button className="btn-secondary" onClick={handleClearSearch}>Xóa</button>
           </div>
         </div>
       </div>

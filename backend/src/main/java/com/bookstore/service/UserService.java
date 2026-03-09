@@ -34,9 +34,22 @@ public class UserService {
 
     public User updateUser(Integer id, User userDetails) {
         return userRepository.findById(id).map(user -> {
-            user.setFullName(userDetails.getFullName());
-            user.setPhoneNumber(userDetails.getPhoneNumber());
-            user.setAddress(userDetails.getAddress());
+            // Only update fields that are not null and not empty
+            if (userDetails.getFullName() != null && !userDetails.getFullName().trim().isEmpty()) {
+                user.setFullName(userDetails.getFullName());
+            }
+            if (userDetails.getPhoneNumber() != null && !userDetails.getPhoneNumber().trim().isEmpty()) {
+                user.setPhoneNumber(userDetails.getPhoneNumber());
+            }
+            if (userDetails.getAddress() != null && !userDetails.getAddress().trim().isEmpty()) {
+                user.setAddress(userDetails.getAddress());
+            }
+            if (userDetails.getRole() != null && !userDetails.getRole().trim().isEmpty()) {
+                user.setRole(userDetails.getRole());
+            }
+            if (userDetails.getAccountStatus() != null && !userDetails.getAccountStatus().trim().isEmpty()) {
+                user.setAccountStatus(userDetails.getAccountStatus());
+            }
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }

@@ -6,6 +6,7 @@ import { showSuccess, showError } from '../../utils/toastNotifications'
 function AdminOrders() {
   const [orders, setOrders] = useState([])
   const [filteredOrders, setFilteredOrders] = useState([])
+  const [userMap, setUserMap] = useState({})
   const [showModal, setShowModal] = useState(false)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -30,6 +31,8 @@ function AdminOrders() {
 
   useEffect(() => {
     fetchOrders()
+    // Scroll to top when page loads
+    window.scrollTo(0, 0)
   }, [])
 
   useEffect(() => {
@@ -40,6 +43,21 @@ function AdminOrders() {
     try {
       const response = await api.get('/orders')
       setOrders(response.data)
+      
+      // Fetch user info for each order
+      const userIds = [...new Set(response.data.map(o => o.userId))]
+      const userMapTemp = {}
+      
+      for (const userId of userIds) {
+        try {
+          const userResponse = await api.get(`/users/${userId}`)
+          userMapTemp[userId] = userResponse.data.fullName || `User ${userId}`
+        } catch (err) {
+          userMapTemp[userId] = `User ${userId}`
+        }
+      }
+      
+      setUserMap(userMapTemp)
     } catch (err) {
       console.error('Error fetching orders:', err)
       setError('Lỗi tải danh sách đơn hàng')
@@ -70,6 +88,9 @@ function AdminOrders() {
       endDate.setHours(23, 59, 59, 999)
       result = result.filter(order => new Date(order.orderDate) <= endDate)
     }
+
+    // Sort by date - newest first
+    result.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
 
     setFilteredOrders(result)
     setCurrentPage(1)
@@ -186,11 +207,11 @@ function AdminOrders() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      'pending': { label: '⏳ Chờ xử lý', class: 'status-pending' },
-      'confirmed': { label: '✅ Đã xác nhận', class: 'status-confirmed' },
-      'shipped': { label: '📦 Đang giao', class: 'status-shipped' },
-      'delivered': { label: '🎉 Đã giao', class: 'status-delivered' },
-      'cancelled': { label: '❌ Đã hủy', class: 'status-cancelled' }
+      'pending': { label: 'Chờ xử lý', class: 'status-pending' },
+      'confirmed': { label: 'Đã xác nhận', class: 'status-confirmed' },
+      'shipped': { label: 'Đang giao', class: 'status-shipped' },
+      'delivered': { label: 'Đã giao', class: 'status-delivered' },
+      'cancelled': { label: 'Đã hủy', class: 'status-cancelled' }
     }
     const info = statusMap[status] || { label: status, class: 'status-unknown' }
     return <span className={`status-badge ${info.class}`}>{info.label}</span>
@@ -205,7 +226,7 @@ function AdminOrders() {
 
       <div className="filter-section">
         <div className="filter-row">
-          <div className="filter-group" style={{ flex: 1 }}>
+          <div className="filter-group search-group">
             <label>Tìm Kiếm</label>
             <input 
               type="text" 
@@ -213,6 +234,7 @@ function AdminOrders() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            <button className="btn-secondary" onClick={handleClearFilters}>Xóa</button>
           </div>
           <div className="filter-group">
             <label>Trạng Thái</label>
@@ -245,9 +267,6 @@ function AdminOrders() {
               onChange={handleDateChange}
             />
           </div>
-          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
-            <button className="btn-secondary" onClick={handleClearFilters}>Xóa Bộ Lọc</button>
-          </div>
         </div>
       </div>
 
@@ -274,7 +293,7 @@ function AdminOrders() {
               filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(order => (
                 <tr key={order.orderId}>
                   <td>#{order.orderId}</td>
-                  <td>{order.userId}</td>
+                  <td>{userMap[order.userId] || `User ${order.userId}`}</td>
                   <td>{order.totalAmount?.toLocaleString()} VND</td>
                   <td>{getStatusBadge(order.status)}</td>
                   <td>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
@@ -328,11 +347,11 @@ function AdminOrders() {
                   value={formData.status}
                   onChange={handleInputChange}
                 >
-                  <option value="pending">⏳ Chờ xử lý</option>
-                  <option value="confirmed">✅ Đã xác nhận</option>
-                  <option value="shipped">📦 Đang giao</option>
-                  <option value="delivered">🎉 Đã giao</option>
-                  <option value="cancelled">❌ Đã hủy</option>
+                  <option value="pending">Chờ xử lý</option>
+                  <option value="confirmed">Đã xác nhận</option>
+                  <option value="shipped">Đang giao</option>
+                  <option value="delivered">Đã giao</option>
+                  <option value="cancelled">Đã hủy</option>
                 </select>
               </div>
 
@@ -362,7 +381,7 @@ function AdminOrders() {
                 </div>
                 <div className="info-row">
                   <span className="label">Người Dùng:</span>
-                  <span className="value">User {selectedOrder.userId}</span>
+                  <span className="value">{userMap[selectedOrder.userId] || `User ${selectedOrder.userId}`}</span>
                 </div>
                 <div className="info-row">
                   <span className="label">Tổng Tiền:</span>

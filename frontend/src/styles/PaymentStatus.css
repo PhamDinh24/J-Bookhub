@@ -18,11 +18,11 @@
 }
 
 .status-card.success {
-  border-top-color: var(--success-color);
+  border-top-color: #10b981;
 }
 
 .status-card.failure {
-  border-top-color: var(--error-color);
+  border-top-color: #ef4444;
 }
 
 .status-icon {
@@ -40,11 +40,11 @@
 }
 
 .status-card.success .status-icon {
-  background-color: var(--success-color);
+  background-color: #10b981;
 }
 
 .status-card.failure .status-icon {
-  background-color: var(--error-color);
+  background-color: #ef4444;
 }
 
 .status-card h1 {
@@ -80,11 +80,11 @@
 
 .detail-row .label {
   font-weight: 500;
-  color: var(--dark-gray);
+  color: #4c63d2;
 }
 
 .detail-row .value {
-  color: var(--primary-color);
+  color: #4c63d2;
   font-weight: 600;
   word-break: break-all;
 }
@@ -112,7 +112,7 @@
 
 .next-steps h3 {
   margin-top: 0;
-  color: var(--primary-color);
+  color: #4c63d2;
 }
 
 .next-steps ul {
@@ -162,25 +162,25 @@
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: #4c63d2;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #1565c0;
+  background-color: #3d4fa8;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 4px 12px rgba(76, 99, 210, 0.3);
 }
 
 .btn-secondary {
-  background-color: var(--light-gray);
-  color: var(--dark-gray);
-  border: 2px solid var(--border-color);
+  background-color: #f5f5f5;
+  color: #333;
+  border: 2px solid #ddd;
 }
 
 .btn-secondary:hover {
   background-color: #e0e0e0;
-  border-color: var(--primary-color);
+  border-color: #4c63d2;
 }
 
 @media (max-width: 600px) {

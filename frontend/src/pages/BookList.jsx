@@ -79,20 +79,29 @@ function BookList() {
   const applyFilters = () => {
     let filtered = [...books]
 
+    // Search by keyword - search in title, description, author name, and publisher name
     if (searchKeyword.trim()) {
-      filtered = filtered.filter(book =>
-        book.title.toLowerCase().includes(searchKeyword.toLowerCase())
-      )
+      const keyword = searchKeyword.toLowerCase().trim()
+      filtered = filtered.filter(book => {
+        const titleMatch = book.title?.toLowerCase().includes(keyword) || false
+        const descriptionMatch = book.description?.toLowerCase().includes(keyword) || false
+        const authorMatch = book.author?.name?.toLowerCase().includes(keyword) || false
+        const publisherMatch = book.publisher?.name?.toLowerCase().includes(keyword) || false
+        return titleMatch || descriptionMatch || authorMatch || publisherMatch
+      })
     }
 
+    // Filter by category
     if (categoryFilter !== 'all') {
       filtered = filtered.filter(book => book.categoryId === parseInt(categoryFilter))
     }
 
+    // Filter by author
     if (authorFilter !== 'all') {
       filtered = filtered.filter(book => book.authorId === parseInt(authorFilter))
     }
 
+    // Filter by price range
     if (priceRange !== 'all') {
       filtered = filtered.filter(book => {
         const price = book.price || 0
@@ -111,12 +120,14 @@ function BookList() {
       })
     }
 
+    // Filter by stock status
     if (stockFilter === 'instock') {
       filtered = filtered.filter(book => book.stockQuantity > 0)
     } else if (stockFilter === 'outofstock') {
       filtered = filtered.filter(book => book.stockQuantity === 0)
     }
 
+    // Sort results
     switch (sortBy) {
       case 'newest':
         filtered.sort((a, b) => (b.bookId || 0) - (a.bookId || 0))
@@ -166,7 +177,7 @@ function BookList() {
         <form onSubmit={handleSearch} className="search-form">
           <input
             type="text"
-            placeholder="Tìm kiếm sách..."
+            placeholder="Tìm kiếm theo tên sách, tác giả, nhà xuất bản..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
           />

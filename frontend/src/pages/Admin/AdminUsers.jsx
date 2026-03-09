@@ -159,7 +159,7 @@ function AdminUsers() {
   }
 
   const handleLockUnlockUser = async (userId, currentStatus) => {
-    const newStatus = currentStatus === 'active' ? 'locked' : 'active'
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
     const confirmMsg = currentStatus === 'active' 
       ? 'Bạn có chắc chắn muốn khóa tài khoản này?' 
       : 'Bạn có chắc chắn muốn mở khóa tài khoản này?'
@@ -214,7 +214,7 @@ function AdminUsers() {
 
       <div className="filter-section">
         <div className="filter-row">
-          <div className="filter-group" style={{ flex: 1 }}>
+          <div className="filter-group search-group">
             <label>Tìm Kiếm</label>
             <input 
               type="text" 
@@ -222,6 +222,7 @@ function AdminUsers() {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            <button className="btn-secondary" onClick={handleClearFilters}>Xóa</button>
           </div>
           <div className="filter-group">
             <label>Vai Trò</label>
@@ -236,11 +237,9 @@ function AdminUsers() {
             <select value={statusFilter} onChange={handleStatusFilterChange}>
               <option value="">-- Tất cả --</option>
               <option value="active">Hoạt động</option>
-              <option value="locked">Khóa</option>
+              <option value="inactive">Khóa</option>
+              <option value="suspended">Tạm dừng</option>
             </select>
-          </div>
-          <div className="filter-actions" style={{ alignItems: 'flex-end' }}>
-            <button className="btn-secondary" onClick={handleClearFilters}>Xóa Bộ Lọc</button>
           </div>
         </div>
       </div>
@@ -279,7 +278,7 @@ function AdminUsers() {
                   </td>
                   <td>
                     <span className={`status-badge status-${user.accountStatus}`}>
-                      {user.accountStatus === 'active' ? 'Hoạt động' : 'Khóa'}
+                      {user.accountStatus === 'active' ? 'Hoạt động' : user.accountStatus === 'inactive' ? 'Khóa' : 'Tạm dừng'}
                     </span>
                   </td>
                   <td>
@@ -397,7 +396,8 @@ function AdminUsers() {
                   onChange={handleInputChange}
                 >
                   <option value="active">Hoạt động</option>
-                  <option value="locked">Khóa</option>
+                  <option value="inactive">Khóa</option>
+                  <option value="suspended">Tạm dừng</option>
                 </select>
               </div>
 

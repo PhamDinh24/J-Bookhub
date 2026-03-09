@@ -45,9 +45,15 @@ public class ReportService {
                 .filter(o -> !o.getOrderDate().isBefore(startDateTime) && !o.getOrderDate().isAfter(endDateTime))
                 .collect(Collectors.toList());
 
+        // Get only delivered orders for revenue calculation
+        List<Order> deliveredOrders = orders.stream()
+                .filter(o -> "delivered".equals(o.getStatus()))
+                .collect(Collectors.toList());
+
         // Calculate totals
         report.setTotalOrders(orders.size());
-        report.setTotalRevenue(orders.stream()
+        // Revenue only counts delivered orders
+        report.setTotalRevenue(deliveredOrders.stream()
                 .map(Order::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
 
@@ -59,14 +65,14 @@ public class ReportService {
         report.setPendingOrders((int) orders.stream().filter(o -> "pending".equals(o.getStatus())).count());
         report.setShippedOrders((int) orders.stream().filter(o -> "shipped".equals(o.getStatus())).count());
 
-        // Daily revenue
-        report.setDailyRevenue(calculateDailyRevenue(orders, startDate, endDate));
+        // Daily revenue (only from delivered orders)
+        report.setDailyRevenue(calculateDailyRevenue(deliveredOrders, startDate, endDate));
 
         // Daily orders
         report.setDailyOrders(calculateDailyOrders(orders, startDate, endDate));
 
         // Top categories
-        report.setTopCategories(calculateTopCategories(orders));
+        report.setTopCategories(calculateTopCategories(deliveredOrders));
 
         return report;
     }

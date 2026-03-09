@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
+import { CartContext } from '../context/CartContext'
 import '../styles/PaymentStatus.css'
 
 function PaymentSuccess() {
   const [searchParams] = useSearchParams()
+  const { clearCart } = useContext(CartContext)
   const [orderInfo, setOrderInfo] = useState({
     orderId: '',
     amount: '',
@@ -11,12 +13,15 @@ function PaymentSuccess() {
   })
 
   useEffect(() => {
+    // Clear cart on successful payment
+    clearCart()
+    
     setOrderInfo({
       orderId: searchParams.get('orderId') || 'N/A',
       amount: searchParams.get('amount') || '0',
       transactionId: searchParams.get('transactionId') || 'N/A'
     })
-  }, [searchParams])
+  }, [searchParams, clearCart])
 
   return (
     <div className="payment-status-container">
