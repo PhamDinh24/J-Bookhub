@@ -1,5 +1,6 @@
 package com.bookstore.controller;
 
+import com.bookstore.exception.ValidationException;
 import com.bookstore.model.Publisher;
 import com.bookstore.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,35 @@ public class PublisherController {
 
     @PostMapping
     public ResponseEntity<Publisher> createPublisher(@RequestBody Publisher publisher) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(publisherRepository.save(publisher));
+        String name = publisher.getName() != null ? publisher.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên nhà xuất bản không được để trống");
+        }
+
+        if (publisherRepository.existsByNameIgnoreCase(name)) {
+            throw new ValidationException("Nhà xuất bản với tên này đã tồn tại");
+        }
+
+        publisher.setName(name);
+        Publisher savedPublisher = publisherRepository.save(publisher);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPublisher);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Publisher> updatePublisher(@PathVariable Integer id, @RequestBody Publisher publisherDetails) {
+        String name = publisherDetails.getName() != null ? publisherDetails.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên nhà xuất bản không được để trống");
+        }
+
         return publisherRepository.findById(id).map(publisher -> {
-            publisher.setName(publisherDetails.getName());
+            if (!publisher.getName().equalsIgnoreCase(name) && publisherRepository.existsByNameIgnoreCase(name)) {
+                throw new ValidationException("Nhà xuất bản với tên này đã tồn tại");
+            }
+
+            publisher.setName(name);
             publisher.setContactInfo(publisherDetails.getContactInfo());
+            publisher.setImageUrl(publisherDetails.getImageUrl());
             return ResponseEntity.ok(publisherRepository.save(publisher));
         }).orElse(ResponseEntity.notFound().build());
     }

@@ -1,5 +1,6 @@
 package com.bookstore.controller;
 
+import com.bookstore.exception.ValidationException;
 import com.bookstore.model.Category;
 import com.bookstore.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +32,37 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+        String name = category.getName() != null ? category.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên danh mục không được để trống");
+        }
+
+        if (categoryRepository.existsByNameIgnoreCase(name)) {
+            throw new ValidationException("Danh mục với tên này đã tồn tại");
+        }
+
+        category.setName(name);
+
         Category savedCategory = categoryRepository.save(category);
         return ResponseEntity.ok(savedCategory);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
+        String name = category.getName() != null ? category.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên danh mục không được để trống");
+        }
+
         return categoryRepository.findById(id)
                 .map(existingCategory -> {
-                    existingCategory.setName(category.getName());
+                    if (!existingCategory.getName().equalsIgnoreCase(name) && categoryRepository.existsByNameIgnoreCase(name)) {
+                        throw new ValidationException("Danh mục với tên này đã tồn tại");
+                    }
+
+                    existingCategory.setName(name);
                     existingCategory.setDescription(category.getDescription());
+                    existingCategory.setImageUrl(category.getImageUrl());
                     Category updatedCategory = categoryRepository.save(existingCategory);
                     return ResponseEntity.ok(updatedCategory);
                 })

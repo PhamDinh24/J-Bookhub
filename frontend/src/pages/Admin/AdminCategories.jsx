@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ImageUpload from '../../components/ImageUpload'
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal'
 import { showSuccess, showError } from '../../utils/toastNotifications'
 import '../../styles/Admin.css'
@@ -11,7 +12,7 @@ function AdminCategories() {
   const [editingId, setEditingId] = useState(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [formData, setFormData] = useState({ name: '', description: '' })
+  const [formData, setFormData] = useState({ name: '', description: '', imageUrl: '' })
   const [message, setMessage] = useState({ type: '', text: '' })
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
@@ -63,20 +64,40 @@ function AdminCategories() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const normalizedName = formData.name?.trim() || ''
+    if (!normalizedName) {
+      const errorMsg = '❌ Tên danh mục không được để trống'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    const isDuplicate = categories.some(cat => cat.name?.toLowerCase() === normalizedName.toLowerCase() && cat.categoryId !== editingId)
+    if (isDuplicate) {
+      const errorMsg = '❌ Danh mục đã tồn tại'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    setFormData(prev => ({ ...prev, name: normalizedName }))
+
     try {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId 
         ? `http://localhost:8080/api/categories/${editingId}`
         : 'http://localhost:8080/api/categories'
 
+      const payload = { ...formData, name: normalizedName }
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
       if (response.ok) {
-        setFormData({ name: '', description: '' })
+        setFormData({ name: '', description: '', imageUrl: '' })
         setEditingId(null)
         setShowForm(false)
         fetchCategories()
@@ -94,7 +115,7 @@ function AdminCategories() {
   }
 
   const handleEdit = (category) => {
-    setFormData({ name: category.name, description: category.description })
+    setFormData({ name: category.name, description: category.description, imageUrl: category.imageUrl || '' })
     setEditingId(category.categoryId)
     setShowForm(true)
   }
@@ -190,6 +211,19 @@ function AdminCategories() {
               rows="3"
             />
           </div>
+          <div className="form-group">
+            <label>🖼️ Ảnh Danh Mục</label>
+            <ImageUpload
+              onImageUpload={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+              type="general"
+              folder="category-images"
+            />
+            {formData.imageUrl && (
+              <div className="image-preview">
+                <img src={formData.imageUrl} alt="Category" />
+              </div>
+            )}
+          </div>
           <button type="submit" className="btn btn-success">
             {editingId ? 'Cập Nhật' : 'Thêm'}
           </button>
@@ -201,6 +235,7 @@ function AdminCategories() {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Ảnh</th>
               <th>Tên</th>
               <th>Mô Tả</th>
               <th>Hành Động</th>
@@ -210,6 +245,7 @@ function AdminCategories() {
             {filteredCategories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(cat => (
               <tr key={cat.categoryId}>
                 <td><strong>#{cat.categoryId}</strong></td>
+                <td>{cat.imageUrl ? <img src={cat.imageUrl} alt={cat.name} className="table-thumb" /> : '–'}</td>
                 <td>{cat.name}</td>
                 <td>{cat.description?.substring(0, 50)}{cat.description?.length > 50 ? '...' : ''}</td>
                 <td>

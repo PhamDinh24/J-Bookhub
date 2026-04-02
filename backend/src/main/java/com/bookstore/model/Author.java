@@ -3,18 +3,21 @@ package com.bookstore.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "authors")
+@Table(name = "authors", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "author_id")
     private Integer authorId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(columnDefinition = "TEXT")
     private String bio;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     public Author() {}
 
@@ -32,4 +35,7 @@ public class Author {
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

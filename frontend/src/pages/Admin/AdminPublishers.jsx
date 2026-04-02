@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ImageUpload from '../../components/ImageUpload'
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal'
 import { showSuccess, showError } from '../../utils/toastNotifications'
 import '../../styles/Admin.css'
@@ -11,7 +12,7 @@ function AdminPublishers() {
   const [editingId, setEditingId] = useState(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [formData, setFormData] = useState({ name: '', contactInfo: '' })
+  const [formData, setFormData] = useState({ name: '', contactInfo: '', imageUrl: '' })
   const [message, setMessage] = useState({ type: '', text: '' })
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
@@ -63,6 +64,25 @@ function AdminPublishers() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const normalizedName = formData.name?.trim() || ''
+    if (!normalizedName) {
+      const errorMsg = '❌ Tên nhà xuất bản không được để trống'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    const isDuplicate = publishers.some(pub => pub.name?.toLowerCase() === normalizedName.toLowerCase() && pub.publisherId !== editingId)
+    if (isDuplicate) {
+      const errorMsg = '❌ Nhà xuất bản đã tồn tại'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    const payload = { ...formData, name: normalizedName }
+
     try {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId 
@@ -72,11 +92,11 @@ function AdminPublishers() {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
       if (response.ok) {
-        setFormData({ name: '', contactInfo: '' })
+        setFormData({ name: '', contactInfo: '', imageUrl: '' })
         setEditingId(null)
         setShowForm(false)
         fetchPublishers()
@@ -94,7 +114,7 @@ function AdminPublishers() {
   }
 
   const handleEdit = (publisher) => {
-    setFormData({ name: publisher.name, contactInfo: publisher.contactInfo })
+    setFormData({ name: publisher.name, contactInfo: publisher.contactInfo, imageUrl: publisher.imageUrl || '' })
     setEditingId(publisher.publisherId)
     setShowForm(true)
   }
@@ -190,6 +210,19 @@ function AdminPublishers() {
               rows="3"
             />
           </div>
+          <div className="form-group">
+            <label>🖼️ Ảnh NXB</label>
+            <ImageUpload
+              onImageUpload={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+              type="general"
+              folder="publisher-images"
+            />
+            {formData.imageUrl && (
+              <div className="image-preview">
+                <img src={formData.imageUrl} alt="Publisher" />
+              </div>
+            )}
+          </div>
           <button type="submit" className="btn btn-success">
             {editingId ? 'Cập Nhật' : 'Thêm'}
           </button>
@@ -201,6 +234,7 @@ function AdminPublishers() {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Ảnh</th>
               <th>Tên</th>
               <th>Thông Tin Liên Hệ</th>
               <th>Hành Động</th>
@@ -210,6 +244,7 @@ function AdminPublishers() {
             {filteredPublishers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(pub => (
               <tr key={pub.publisherId}>
                 <td><strong>#{pub.publisherId}</strong></td>
+                <td>{pub.imageUrl ? <img src={pub.imageUrl} alt={pub.name} className="table-thumb" /> : '–'}</td>
                 <td>{pub.name}</td>
                 <td>{pub.contactInfo?.substring(0, 50)}{pub.contactInfo?.length > 50 ? '...' : ''}</td>
                 <td>

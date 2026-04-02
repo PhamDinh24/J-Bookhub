@@ -44,12 +44,29 @@ public class BookService {
     }
 
     public Book createBookFromDTO(BookDTO bookDTO) {
+        String title = bookDTO.getTitle() != null ? bookDTO.getTitle().trim() : "";
+        String isbn = bookDTO.getIsbn() != null ? bookDTO.getIsbn().trim() : null;
+
+        if (title.isEmpty()) {
+            throw new com.bookstore.exception.ValidationException("Tên sách không được để trống");
+        }
+
+        if (isbn != null && !isbn.isEmpty()) {
+            if (bookRepository.existsByIsbnIgnoreCase(isbn)) {
+                throw new com.bookstore.exception.ValidationException("ISBN đã tồn tại");
+            }
+        }
+
+        if (bookRepository.existsByTitleIgnoreCase(title)) {
+            throw new com.bookstore.exception.ValidationException("Tên sách đã tồn tại");
+        }
+
         Book book = new Book();
-        book.setTitle(bookDTO.getTitle());
+        book.setTitle(title);
         book.setDescription(bookDTO.getDescription());
         book.setPrice(bookDTO.getPrice());
         book.setStockQuantity(bookDTO.getStockQuantity());
-        book.setIsbn(bookDTO.getIsbn());
+        book.setIsbn(isbn);
         book.setPublicationYear(bookDTO.getPublicationYear());
         book.setCoverImageUrl(bookDTO.getCoverImageUrl());
         
@@ -111,11 +128,26 @@ public class BookService {
 
     public Book updateBookFromDTO(Integer id, BookDTO bookDTO) {
         return bookRepository.findById(id).map(book -> {
-            book.setTitle(bookDTO.getTitle());
+            String title = bookDTO.getTitle() != null ? bookDTO.getTitle().trim() : "";
+            String isbn = bookDTO.getIsbn() != null ? bookDTO.getIsbn().trim() : null;
+
+            if (title.isEmpty()) {
+                throw new com.bookstore.exception.ValidationException("Tên sách không được để trống");
+            }
+
+            if (!book.getTitle().equalsIgnoreCase(title) && bookRepository.existsByTitleIgnoreCase(title)) {
+                throw new com.bookstore.exception.ValidationException("Tên sách đã tồn tại");
+            }
+
+            if (isbn != null && !isbn.isEmpty() && !isbn.equalsIgnoreCase(book.getIsbn()) && bookRepository.existsByIsbnIgnoreCase(isbn)) {
+                throw new com.bookstore.exception.ValidationException("ISBN đã tồn tại");
+            }
+
+            book.setTitle(title);
             book.setDescription(bookDTO.getDescription());
             book.setPrice(bookDTO.getPrice());
             book.setStockQuantity(bookDTO.getStockQuantity());
-            book.setIsbn(bookDTO.getIsbn());
+            book.setIsbn(isbn);
             book.setPublicationYear(bookDTO.getPublicationYear());
             book.setCoverImageUrl(bookDTO.getCoverImageUrl());
             

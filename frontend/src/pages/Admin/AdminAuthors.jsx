@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ImageUpload from '../../components/ImageUpload'
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal'
 import { showSuccess, showError } from '../../utils/toastNotifications'
 import '../../styles/Admin.css'
@@ -11,7 +12,7 @@ function AdminAuthors() {
   const [editingId, setEditingId] = useState(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [formData, setFormData] = useState({ name: '', bio: '' })
+  const [formData, setFormData] = useState({ name: '', bio: '', imageUrl: '' })
   const [message, setMessage] = useState({ type: '', text: '' })
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
@@ -63,6 +64,25 @@ function AdminAuthors() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const normalizedName = formData.name?.trim() || ''
+    if (!normalizedName) {
+      const errorMsg = '❌ Tên tác giả không được để trống'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    const isDuplicate = authors.some(author => author.name?.toLowerCase() === normalizedName.toLowerCase() && author.authorId !== editingId)
+    if (isDuplicate) {
+      const errorMsg = '❌ Tác giả đã tồn tại'
+      setMessage({ type: 'error', text: errorMsg })
+      showError(errorMsg)
+      return
+    }
+
+    const payload = { ...formData, name: normalizedName }
+
     try {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId 
@@ -72,11 +92,11 @@ function AdminAuthors() {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
       if (response.ok) {
-        setFormData({ name: '', bio: '' })
+        setFormData({ name: '', bio: '', imageUrl: '' })
         setEditingId(null)
         setShowForm(false)
         fetchAuthors()
@@ -94,7 +114,7 @@ function AdminAuthors() {
   }
 
   const handleEdit = (author) => {
-    setFormData({ name: author.name, bio: author.bio })
+    setFormData({ name: author.name, bio: author.bio, imageUrl: author.imageUrl || '' })
     setEditingId(author.authorId)
     setShowForm(true)
   }
@@ -190,6 +210,19 @@ function AdminAuthors() {
               rows="3"
             />
           </div>
+          <div className="form-group">
+            <label>🖼️ Ảnh Tác Giả</label>
+            <ImageUpload
+              onImageUpload={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+              type="general"
+              folder="author-images"
+            />
+            {formData.imageUrl && (
+              <div className="image-preview">
+                <img src={formData.imageUrl} alt="Author" />
+              </div>
+            )}
+          </div>
           <button type="submit" className="btn btn-success">
             {editingId ? 'Cập Nhật' : 'Thêm'}
           </button>
@@ -201,6 +234,7 @@ function AdminAuthors() {
           <thead>
             <tr>
               <th>ID</th>
+              <th>Ảnh</th>
               <th>Tên</th>
               <th>Tiểu Sử</th>
               <th>Hành Động</th>
@@ -210,6 +244,7 @@ function AdminAuthors() {
             {filteredAuthors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(author => (
               <tr key={author.authorId}>
                 <td><strong>#{author.authorId}</strong></td>
+                <td>{author.imageUrl ? <img src={author.imageUrl} alt={author.name} className="table-thumb" /> : '–'}</td>
                 <td>{author.name}</td>
                 <td>{author.bio?.substring(0, 50)}{author.bio?.length > 50 ? '...' : ''}</td>
                 <td>

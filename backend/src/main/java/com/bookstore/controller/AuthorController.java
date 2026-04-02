@@ -1,5 +1,6 @@
 package com.bookstore.controller;
 
+import com.bookstore.exception.ValidationException;
 import com.bookstore.model.Author;
 import com.bookstore.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,35 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorRepository.save(author));
+        String name = author.getName() != null ? author.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên tác giả không được để trống");
+        }
+
+        if (authorRepository.existsByNameIgnoreCase(name)) {
+            throw new ValidationException("Tác giả với tên này đã tồn tại");
+        }
+
+        author.setName(name);
+        Author savedAuthor = authorRepository.save(author);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedAuthor);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Author> updateAuthor(@PathVariable Integer id, @RequestBody Author authorDetails) {
+        String name = authorDetails.getName() != null ? authorDetails.getName().trim() : "";
+        if (name.isEmpty()) {
+            throw new ValidationException("Tên tác giả không được để trống");
+        }
+
         return authorRepository.findById(id).map(author -> {
-            author.setName(authorDetails.getName());
+            if (!author.getName().equalsIgnoreCase(name) && authorRepository.existsByNameIgnoreCase(name)) {
+                throw new ValidationException("Tác giả với tên này đã tồn tại");
+            }
+
+            author.setName(name);
             author.setBio(authorDetails.getBio());
+            author.setImageUrl(authorDetails.getImageUrl());
             return ResponseEntity.ok(authorRepository.save(author));
         }).orElse(ResponseEntity.notFound().build());
     }
